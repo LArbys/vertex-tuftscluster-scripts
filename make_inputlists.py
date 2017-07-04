@@ -5,8 +5,11 @@ import os,sys
 #LARCV_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8/calmod_mcc8_bnb_nu_cosmic_v06_26_01_run01.09000_run01.09399_v01_p00_out"
 #TAGGER_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/out/mcc8numu/"
 
-# mcc8 nue test
-SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8/nue_intrinsics_fid10/out_week0619/ssnet/"
+# mcc8 nue test: tufts
+#SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8/nue_intrinsics_fid10/out_week0619/ssnet/"
+
+# MCC8.1 nue only: tufts
+SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_nocosmic_1eNpfiltered/out_week0626/ssnet/"
 
 # We parse folder contents for larcv and larlite files
 # We keep them in a dictionary

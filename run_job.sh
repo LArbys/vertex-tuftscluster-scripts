@@ -61,8 +61,8 @@ echo "RUNNING VERTEX JOB ${jobid}" > $logfile
 echo "ssnet file: ${input_ssnet_file}" >> $logfile
 
 # temp output files
-outfile_ana_temp=`printf ${slurm_folder}/vertexana_%04d.root ${jobid}`
-outfile_out_temp=`printf ${slurm_folder}/vertexout_%04d.root ${jobid}`
+outfile_ana_temp=`printf ${slurm_folder}/vertexana_%04d ${jobid}`
+outfile_out_temp=`printf ${slurm_folder}/vertexout_%04d ${jobid}`
 
 echo "temporary ana file: ${outfile_ana_temp}" >> $logfile
 echo "temporary out file: ${outfile_out_temp}" >> $logfile
@@ -74,7 +74,7 @@ echo "final output location: ${outfile_vertex}" >> $logfile
 echo "final ana location: ${anafile_vertex}" >> $logfile
 
 # define cfg file
-cfg_file=${jobdir}/prod_fullchain_ssnet_combined.cfg
+cfg_file=${jobdir}/prod_fullchain_ssnet_combined_wire.cfg
 cat $cfg_file >> $logfile
 
 # command
@@ -84,8 +84,8 @@ echo "RUNNING: python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_
 python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile
 
 # COPY DATA
-cp $outfile_ana_temp $anafile_vertex
-cp $outfile_out_temp $outfile_vertex
+cp ${outfile_ana_temp}.root $anafile_vertex
+cp ${outfile_out_temp}.root $outfile_vertex
 
 
 # clean up
