@@ -81,7 +81,7 @@ cat $cfg_file >> $logfile
 echo "RUNNING: python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file}" >> $logfile
 
 # RUN
-python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile
+python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1
 
 # COPY DATA
 cp ${outfile_ana_temp}.root $anafile_vertex

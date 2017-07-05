@@ -8,8 +8,11 @@ import os,sys
 # mcc8 nue test: tufts
 #SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8/nue_intrinsics_fid10/out_week0619/ssnet/"
 
+# mcc8 nue: tufts
+SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_1eNpfiltered/out_week0626/ssnet/"
+
 # MCC8.1 nue only: tufts
-SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_nocosmic_1eNpfiltered/out_week0626/ssnet/"
+#SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_nocosmic_1eNpfiltered/out_week0626/ssnet/"
 
 # We parse folder contents for larcv and larlite files
 # We keep them in a dictionary
