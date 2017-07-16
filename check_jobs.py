@@ -7,10 +7,12 @@ import ROOT as rt
 # MCC8.1 nue+cosmic: Maccfrey
 #VERTEX_FOLDER="/home/taritree/larbys/data/mcc8.1/nue_1eNpfiltered/out_week0626/vertex"
 
+# MCC8.1 nue+cosmic: Tufts
+VERTEX_FOLDER="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_1eNpfiltered/out_week071017/vertex"
+
 # MCC8.1 nue only: Tufts
 #VERTEX_FOLDER="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_nocosmic_1eNpfiltered/out_week0626/vertex"
 
-VERTEX_FOLDER="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_1eNpfiltered/out_week0626/vertex"
 
 files = os.listdir(VERTEX_FOLDER)
 

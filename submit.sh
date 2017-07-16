@@ -3,7 +3,7 @@
 #SBATCH --job-name=vertex
 #SBATCH --output=vertex_log.txt
 #
-#SBATCH --ntasks=10
+#SBATCH --ntasks=100
 #SBATCH --time=2:00:00
 #SBATCH --mem-per-cpu=4000
 
