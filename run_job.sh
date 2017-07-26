@@ -74,7 +74,8 @@ echo "final output location: ${outfile_vertex}" >> $logfile
 echo "final ana location: ${anafile_vertex}" >> $logfile
 
 # define cfg file
-cfg_file=${jobdir}/prod_fullchain_ssnet_combined_wire_newtag.cfg
+#cfg_file=${jobdir}/prod_fullchain_ssnet_combined_wire_newtag.cfg
+cfg_file=${jobdir}/prod_fullchain_ssnet_combined_raccoon.cfg
 cat $cfg_file >> $logfile
 
 # command

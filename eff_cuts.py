@@ -67,9 +67,9 @@ OUTPUT_FILE = os.path.basename(INPUT_FILE)
 
 f_ = open("eff_%s.txt"%OUTPUT_FILE,'w+')
 
+f_.write("Total Events: %s\n"%str(event_vertex_df.query("nprotons==1 and nothers==0").index.size))
 f_.write("Good croi counter: %d" % event_vertex_df.query("good_croi_ctr>0 and nprotons==1 and nothers==0").index.size);
 f_.write("\n")
-f_.write("Total Events: %s\n"%str(event_vertex_df.query("nprotons==1 and nothers==0").index.size))
 f_.write("Total vertex: %s\n"%str(comb_df.query("nprotons==1 and nothers==0").index.size))
 f_.write("\n")
 f_.write("Cut -1) %s\n"%cutstr_1)
