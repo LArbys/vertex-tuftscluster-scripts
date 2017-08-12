@@ -1,5 +1,28 @@
 import os,sys
 
+# DETERMINE MACHINE DATA FOLDER
+TUFTS="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data"
+MCCAFFREY="/mnt/sdb/larbys/data"
+DATAFOLDER="__unset__"
+try:
+    LOCAL_MACHINE=os.popen("uname -n").readlines()[0].strip()
+    if LOCAL_MACHINE not in ["mccaffrey","login001"]:
+        raise RuntimeError("unrecognized machine")
+
+    if LOCAL_MACHINE=="mccaffrey":
+        DATAFOLDER=MCCAFFREY
+    elif LOCAL_MACHINE=="login001":
+        DATAFOLDER=TUFTS
+        
+except:
+    print "Could not get machine name"
+    LOCAL_MACHINE=os.popen("uname -n").readlines()
+    print LOCAL_MACHINE
+    sys.exit(-1)
+
+if DATAFOLDER=="__unset__":
+    raise RuntimeError("Didnt set DATAFOLDER properly.")
+
 # SPECIFY FOLDER WHERE INPUT DATA LIVES
 # numu
 #LARCV_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8/calmod_mcc8_bnb_nu_cosmic_v06_26_01_run01.09000_run01.09399_v01_p00_out"
@@ -9,13 +32,16 @@ import os,sys
 #SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8/nue_intrinsics_fid10/out_week0619/ssnet/"
 
 # mcc8.1 nue+cosmics: tufts
-SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_1eNpfiltered/out_week071017/ssnet/"
+#SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_1eNpfiltered/out_week072517/ssnet_mcc8/"
 
 # MCC8.1 nue only: tufts
 #SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_nocosmic_1eNpfiltered/out_week0626/ssnet/"
 
 # MCC8.1 numu+cosmics: tufts
 #SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/numu_1muNpfiltered/out_week071017/ssnet/"
+
+# COMPARISON SAMPLES
+SSNET_SOURCE=DATAFOLDER+"/comparison_samples/1e1p/out_week080717/ssnet_mcc8"
 
 # We parse folder contents for larcv and larlite files
 # We keep them in a dictionary
