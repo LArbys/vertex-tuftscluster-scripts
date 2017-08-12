@@ -74,14 +74,17 @@ echo "final output location: ${outfile_vertex}" >> $logfile
 echo "final ana location: ${anafile_vertex}" >> $logfile
 
 # define cfg file
-cfg_file=${jobdir}/prod_fullchain_ssnet_combined_wire_newtag.cfg
+#cfg_file=${jobdir}/prod_fullchain_ssnet_combined_wire_newtag.cfg
+#cfg_file=${jobdir}/prod_fullchain_ssnet_combined_raccoon.cfg
+#cfg_file=${jobdir}/prod_fullchain_ssnet_combined_vic.cfg
+cfg_file=${jobdir}/prod_fullchain_ssnet_combined_newtag.cfg
 cat $cfg_file >> $logfile
 
 # command
 echo "RUNNING: python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file}" >> $logfile
 
 # RUN
-python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1
+python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1 || exit
 
 # COPY DATA
 cp ${outfile_ana_temp}.root $anafile_vertex
@@ -89,5 +92,4 @@ cp ${outfile_out_temp}.root $outfile_vertex
 
 
 # clean up
-#cd ../
-#rm -r $slurm_folder
+rm -r $slurm_folder

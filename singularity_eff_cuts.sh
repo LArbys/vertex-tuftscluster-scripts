@@ -2,8 +2,11 @@
 
 VERTEXANAFILE=$1
 
-CONTAINER=/cluster/kappa/90-days-archive/wongjiradlab/larbys/images/dllee_unified/singularity-dllee-unified-071017.img
-WORKDIR=/cluster/kappa/90-days-archive/wongjiradlab/grid_jobs/vertex-tuftscluster-scripts
+#CONTAINER=/cluster/kappa/90-days-archive/wongjiradlab/larbys/images/dllee_unified/singularity-dllee-unified-071017.img
+#WORKDIR=/cluster/kappa/90-days-archive/wongjiradlab/grid_jobs/vertex-tuftscluster-scripts
+
+CONTAINER=/home/taritree/larbys/images/dllee_unified/singularity-dllee-unified-071017.img
+WORKDIR=/home/taritree/dllee_integration/vertex-tuftscluster-scripts
 
 module load singularity
 
