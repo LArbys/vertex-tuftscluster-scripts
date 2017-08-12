@@ -11,11 +11,18 @@ import os,sys
 # mcc8.1 nue+cosmics: tufts
 #SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_1eNpfiltered/out_week071017/ssnet/"
 
+# mcc8.1 nue+cosmics: mccaffrey
+SSNET_SOURCE="/home/taritree/larbys/data/mcc8.1/numu_1muNpfiltered/out_week071017/ssnet/"
+
 # MCC8.1 nue only: tufts
 #SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/nue_nocosmic_1eNpfiltered/out_week0626/ssnet/"
 
 # MCC8.1 numu+cosmics: tufts
-SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/numu_1muNpfiltered/out_week071017/ssnet/"
+#SSNET_SOURCE="/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/mcc8.1/numu_1muNpfiltered/out_week071017/ssnet/"
+
+# MCC8 Cosmic: MCCAFFERY
+#SSNET_SOURCE="/home/taritree/larbys/data/mcc8.1/corsika_mc/out_week0626/ssnet"
+
 
 # We parse folder contents for larcv and larlite files
 # We keep them in a dictionary
