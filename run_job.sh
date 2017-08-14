@@ -84,12 +84,13 @@ cat $cfg_file >> $logfile
 echo "RUNNING: python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file}" >> $logfile
 
 # RUN
-python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1 || exit
+#python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1 || exit
+python run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1 || exit
 
 # COPY DATA
-cp ${outfile_ana_temp}.root $anafile_vertex
-cp ${outfile_out_temp}.root $outfile_vertex
+rsync -av ${outfile_ana_temp}.root $anafile_vertex
+rsync -av ${outfile_out_temp}.root $outfile_vertex
 
 
 # clean up
-rm -r $slurm_folder
+#rm -r $slurm_folder
