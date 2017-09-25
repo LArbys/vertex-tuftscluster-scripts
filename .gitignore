@@ -1,4 +1,6 @@
 *~
-inputlists/*
-slurm_*
-jobidlist.txt
+#*#
+*.sh
+*.txt
+*.cfg
+*.pyc
