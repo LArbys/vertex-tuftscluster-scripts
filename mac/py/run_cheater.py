@@ -29,7 +29,7 @@ larbys_cheater = proc.process_ptr(larbys_cheater_id)
 print "GOT: ",larbys_cheater,"@ id=",larbys_cheater_id
 
 larbys_cheater.SetIOManager(proc.io())
-
+larbys_cheater.SetTrueROIProducer("segment")
 proc.batch_process()
 
 proc.finalize()

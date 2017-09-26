@@ -76,13 +76,13 @@ for accid in xrange(NACC):
         f.write(data)
 
     data = ""
-    with open(os.path.join(MAC_DIR,"template","submit_reco_template.sh"),"r") as f:
+    with open(os.path.join(MAC_DIR,"template","submit_reco_job.sh"),"r") as f:
         data = f.read()
 
     data = data.replace("XXX",name_dir_name)
     data = data.replace("YYY",str(len(num_slice)))
 
-    with open(os.path.join(MAC_DIR,"submit_reco_%s.sh" % name_dir_name),"w+") as f:
+    with open(os.path.join(MAC_DIR,"submit_%s.sh" % name_dir_name),"w+") as f:
         f.write(data)
         
     shell("rm -rf %s" % os.path.join(OUT_DIR,name_dir_name))
