@@ -1,6 +1,19 @@
 import os,sys
 from locs import *
 
+if len(sys.argv) != 5:
+    print
+    print "specify..."
+    print
+    print "NAME  = str(sys.argv[1])"
+    print "CFG   = str(sys.argv[2])"
+    print "NACC  = int(sys.argv[3])"
+    print "TARGET= str(sys.argv[4])"
+    print
+    print "...bye"
+    print
+    sys.exit(1)
+
 NAME  = str(sys.argv[1])
 CFG   = str(sys.argv[2])
 NACC  = int(sys.argv[3])

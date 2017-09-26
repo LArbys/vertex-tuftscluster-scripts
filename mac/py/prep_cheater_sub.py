@@ -1,9 +1,24 @@
 import os,sys
 from locs import *
 
+if len(sys.argv) != 5:
+    print
+    print "specify..."
+    print
+    print "NAME  = str(sys.argv[1])"
+    print "TYPE  = str(sys.argv[2])"
+    print "CFG   = str(sys.argv[3])"
+    print "NACC  = int(sys.argv[4])"
+    print
+    print "...bye"
+    print
+    sys.exit(1)
+
+
 NAME  = str(sys.argv[1])
-CFG   = str(sys.argv[2])
-NACC  = int(sys.argv[3])
+TYPE  = str(sys.argv[2])
+CFG   = str(sys.argv[3])
+NACC  = int(sys.argv[4])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 PY_DIR   = os.path.dirname(os.path.realpath(__file__))
@@ -26,7 +41,7 @@ num_v   = [os.path.basename(f).split(".")[0].split("_")[-1] for f in flist_v]
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_cheater_p%02d" % (NAME,accid)
+    name_dir_name = "%s_cheater_%s_p%02d" % (NAME,TYPE,accid)
     name_dir      = os.path.join(MAC_DIR,name_dir_name)
 
     out_dir       = os.path.join(name_dir,"out")
