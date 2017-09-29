@@ -24,7 +24,8 @@ for type_ in ['reco','reana','cheater']:
         
     data = data.replace("ZZZ",type_)
 
-    folder = os.path.basename(PWD)
+    #folder = os.path.basename(PWD)
+    folder = str(PWD)
     data = data.replace("AAA",folder)
 
     img = [f for f in os.listdir(os.path.join(PWD,"image")) if f.endswith(".img")]

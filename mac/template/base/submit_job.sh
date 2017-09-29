@@ -7,12 +7,12 @@
 #SBATCH --time=4:00:00
 #SBATCH --mem-per-cpu=2000
 
-CONTAINER=/cluster/kappa/90-days-archive/wongjiradlab/vgenty/vertex/AAA/image/BBB
-WORKDIR=/cluster/kappa/90-days-archive/wongjiradlab/vgenty/vertex/AAA/XXX/work
+CONTAINER=AAA/image/BBB
+WORKDIR=AAA/XXX/work
 INPUTLISTDIR=${WORKDIR}/inputlists
 JOBIDLIST=${WORKDIR}/rerunlist.txt
 
-OUTPUTDIR=/cluster/kappa/90-days-archive/wongjiradlab/vgenty/vertex/AAA/XXX/out
+OUTPUTDIR=AAA/XXX/out
 
 mkdir -p ${OUTPUTDIR}
 module load singularity
