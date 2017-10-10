@@ -1,21 +1,23 @@
 import os,sys
 from locs import *
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 5:
     print
     print "specify..."
     print
-    print "NAME    = str(sys.argv[1])"
-    print "NACC    = int(sys.argv[2])"
-    print "LCTARGET1 = str(sys.argv[3])"
+    print "NAME      = str(sys.argv[1])"
+    print "TYPE      = str(sys.argv[2])"
+    print "NACC      = int(sys.argv[3])"
+    print "LCTARGET1 = str(sys.argv[4])"
     print
     print "...bye"
     print
     sys.exit(1)
 
 NAME   = str(sys.argv[1])
-NACC   = int(sys.argv[2])
-TARGET = str(sys.argv[3])
+TYPE   = str(sys.argv[2])
+NACC   = int(sys.argv[3])
+TARGET = str(sys.argv[4])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 PY_DIR   = os.path.dirname(os.path.realpath(__file__))
@@ -59,7 +61,7 @@ targ_ll_mcinfo_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) 
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_shower_p%02d" % (NAME,accid)
+    name_dir_name = "%s_%s_shower_p%02d" % (NAME,TYPE,accid)
     name_dir      = os.path.join(PY_DIR,name_dir_name)
 
     out_dir       = os.path.join(name_dir,"out")
@@ -93,20 +95,24 @@ for accid in xrange(NACC):
             value = lc_to_ll[targ_num]
         except KeyError:
             continue
-        
-        idx0 = targ_ll_reco_num_v.index(lc_to_ll[targ_num])
-        idx1 = targ_ll_mcinfo_num_v.index(lc_to_ll[targ_num])
-        
+
+
         targ_lc_flist_slice.append(targ_flist)
         targ_lc_num_slice.append(targ_num)
+        
+        idx0 = targ_ll_reco_num_v.index(lc_to_ll[targ_num])
 
         targ_ll_reco_flist_slice.append(targ_ll_reco_flist_v[idx0])
         targ_ll_reco_num_slice.append(targ_ll_reco_num_v[idx0])
 
-        targ_ll_mcinfo_flist_slice.append(targ_ll_mcinfo_flist_v[idx1])
-        targ_ll_mcinfo_num_slice.append(targ_ll_mcinfo_num_v[idx1])
-
-
+        if targ_ll_mcinfo_flist_v and targ_ll_mcinfo_num_v:
+            idx1 = targ_ll_mcinfo_num_v.index(lc_to_ll[targ_num])
+            targ_ll_mcinfo_flist_slice.append(targ_ll_mcinfo_flist_v[idx1])
+            targ_ll_mcinfo_num_slice.append(targ_ll_mcinfo_num_v[idx1])
+        else:
+            targ_ll_mcinfo_flist_slice.append("INVALID")
+            targ_ll_mcinfo_num_slice.append(-1)
+            
     shell("touch %s" % os.path.join(work_dir,"jobidlist.txt"))    
     
     for x in zip(targ_ll_reco_num_slice,targ_ll_reco_flist_slice,
@@ -123,9 +129,7 @@ for accid in xrange(NACC):
         targ_lc_num   = x[4]
         targ_lc_flist = x[5]
         
-        assert targ_ll_reco_num == targ_ll_mcinfo_num
         assert lc_to_ll[targ_lc_num] == targ_ll_reco_num
-        assert lc_to_ll[targ_lc_num] == targ_ll_mcinfo_num
 
         f = open(os.path.join(inputlists_dir,"inputlist_%04d.txt" % int(targ_lc_num)),"w+")
         f.write(targ_lc_flist)

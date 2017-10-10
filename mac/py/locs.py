@@ -16,4 +16,4 @@ LL_DIR_m = {}
 LL_DIR_m['1e1p'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/1e1p/larlite"
 LL_DIR_m['inclusive_elec'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/inclusive_elec/larlite"
 LL_DIR_m['ncpizero'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/ncpizero/larlite"
-
+LL_DIR_m['extbnb_new'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/extbnb_wprecuts/larlite"

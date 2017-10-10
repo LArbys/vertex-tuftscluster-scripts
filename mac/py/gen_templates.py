@@ -15,7 +15,7 @@ TEMPLATE_DIR      = os.path.join(MAC_DIR,"template")
 TEMPLATE_BASE_DIR = os.path.join(TEMPLATE_DIR,"base")
 
 
-for type_ in ['reco','reana','cheater','filter','shower']:
+for type_ in ['reco','reana','cheater','filter','shower', 'tracker']:
     
     print "@type=",type_
     data = ""
