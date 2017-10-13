@@ -1,23 +1,25 @@
 import os,sys
 from locs import *
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     print
     print "specify..."
     print
     print "NAME  = str(sys.argv[1])"
     print "TYPE  = str(sys.argv[2])"
-    print "NACC  = int(sys.argv[3])"
-    print "TARGET= str(sys.argv[4])"
+    print "CFG   = str(sys.argv[3])"
+    print "NACC  = int(sys.argv[4])"
+    print "TARGET= str(sys.argv[5])"
     print
     print "...bye"
     print
     sys.exit(1)
 
-NAME  = str(sys.argv[1])
+NAME   = str(sys.argv[1])
 TYPE   = str(sys.argv[2])
-NACC  = int(sys.argv[3])
-TARGET= str(sys.argv[4])
+CFG    = str(sys.argv[3])
+NACC   = int(sys.argv[4])
+TARGET = str(sys.argv[5])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 PY_DIR   = os.path.dirname(os.path.realpath(__file__))
@@ -48,7 +50,7 @@ targ_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in t
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_%s_tracker_p%02d" % (NAME,TYPE,accid)
+    name_dir_name = "%s_tracker_%s_p%02d" % (NAME,TYPE,accid)
     name_dir      = os.path.join(PY_DIR,name_dir_name)
 
     out_dir       = os.path.join(name_dir,"out")
@@ -105,11 +107,14 @@ for accid in xrange(NACC):
 
     shell("scp %s %s" % (os.path.join(work_dir,"jobidlist.txt"),
                          os.path.join(work_dir,"rerunlist.txt")))
-    
+    shell("scp %s %s" % (os.path.join(MAC_DIR,CFG),work_dir))    
+
     # copy & replace templates
     data = ""
     with open(os.path.join(MAC_DIR,"template","run_tracker_job_template.sh"),"r") as f:
         data = f.read()
+
+    data = data.replace("XXX",os.path.basename(CFG))
 
     with open(os.path.join(work_dir,"run_tracker_job.sh"),"w+") as f:
         f.write(data)

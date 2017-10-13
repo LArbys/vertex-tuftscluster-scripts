@@ -61,7 +61,7 @@ targ_ll_mcinfo_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) 
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_%s_shower_p%02d" % (NAME,TYPE,accid)
+    name_dir_name = "%s_shower_%s_p%02d" % (NAME,TYPE,accid)
     name_dir      = os.path.join(PY_DIR,name_dir_name)
 
     out_dir       = os.path.join(name_dir,"out")

@@ -9,7 +9,7 @@ if len(sys.argv) != 6:
     print "TYPE  = str(sys.argv[2])"
     print "NACC  = int(sys.argv[3])"
     print "TARGET= str(sys.argv[4])"
-    print "LLCUT = float(sys.argv[5])"
+    print "LLCUT = str(sys.argv[5])"
     print
     print "...bye"
     print
@@ -19,7 +19,7 @@ NAME   = str(sys.argv[1])
 TYPE   = str(sys.argv[2])
 NACC   = int(sys.argv[3])
 TARGET = str(sys.argv[4])
-LLCUT  = float(sys.argv[5])
+LLCUT  = str(sys.argv[5])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 PY_DIR   = os.path.dirname(os.path.realpath(__file__))
@@ -116,7 +116,7 @@ for accid in xrange(NACC):
     with open(os.path.join(MAC_DIR,"template","run_filter_job_template.sh"),"r") as f:
         data = f.read()
         
-    data = data.replace("XXX",str(LLCUT))
+    data = data.replace("XXX",LLCUT)
     with open(os.path.join(work_dir,"run_filter_job.sh"),"w+") as f:
         f.write(data)
 

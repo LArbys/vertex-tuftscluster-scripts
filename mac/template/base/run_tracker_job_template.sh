@@ -79,12 +79,12 @@ tracker_dir=${LARCV_BASEDIR}/app/Reco3D/mac
 
 # run 0
 # command
-echo "python ${tracker_dir}/run_reco3d.py ${input_files} ." >> $logfile
+echo "python ${tracker_dir}/run_reco3d.py ${jobdir}/XXX ${input_files} ." >> $logfile
 
-python ${tracker_dir}/run_reco3d.py ${input_files} . >> $logfile 2>&1 || exit
+python ${tracker_dir}/run_reco3d.py ${jobdir}/XXX ${input_files} . >> $logfile 2>&1 || exit
 
 # copy output
-# rsync -av shower*.root ${output_dir}
+rsync -av track*.root ${output_dir}
 
 cd $jobdir
 

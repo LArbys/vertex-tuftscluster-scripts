@@ -71,6 +71,7 @@ python ${nue_ll_dir}/filter_nue_likelihood.py ${input_files} XXX . >> $logfile 2
 
 # copy output
 rsync -av *.root ${output_dir}
+rsync -av *.pkl ${output_dir}
 
 cd $jobdir
 

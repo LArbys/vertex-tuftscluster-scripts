@@ -86,7 +86,8 @@ for accid in xrange(NACC):
     data = ""
     with open(os.path.join(MAC_DIR,"template","run_reco_job_template.sh"),"r") as f:
         data = f.read()
-    data = data.replace("XXX",CFG)
+
+    data = data.replace("XXX",os.path.basename(CFG))
     with open(os.path.join(work_dir,"run_reco_job.sh"),"w+") as f:
         f.write(data)
 
