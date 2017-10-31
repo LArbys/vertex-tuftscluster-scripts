@@ -52,6 +52,8 @@ assert len(targ_out_num_v)   == len(targ_ana_num_v)
 #
 # Slice on number of accounts
 #
+
+fout_all = open(os.path.join(MAC_DIR,"submit_all_%s_filter_%s.sh" % (NAME,TYPE)),"w+")
 for accid in xrange(NACC):
     
     # set paths
@@ -132,3 +134,6 @@ for accid in xrange(NACC):
         
     shell("rm -rf %s" % os.path.join(OUT_DIR,name_dir_name))
     shell("mv -f %s %s" % (name_dir,OUT_DIR))
+    fout_all.write("sbatch " + "submit_%s.sh\n" % name_dir_name)
+
+fout_all.close()

@@ -20,8 +20,8 @@ TYPE  = str(sys.argv[2])
 CFG   = str(sys.argv[3])
 NACC  = int(sys.argv[4])
 
-NAME_DIR  = DATA_DIR_m[NAME]
-PY_DIR   = os.path.dirname(os.path.realpath(__file__))
+NAME_DIR  = UNION_DIR_m[NAME]
+PY_DIR    = os.path.dirname(os.path.realpath(__file__))
 MAC_DIR   = os.path.join(PY_DIR,"..")
 OUT_DIR   = os.path.join(PY_DIR,"../..")
 
@@ -38,10 +38,11 @@ num_v   = [os.path.basename(f).split(".")[0].split("_")[-1] for f in flist_v]
 #
 # Slice on number of accounts
 #
+fout_all = open(os.path.join(MAC_DIR,"submit_all_%s_union_%s.sh" % (NAME,TYPE)),"w+")
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_reco_%s_p%02d" % (NAME,TYPE,accid)
+    name_dir_name = "%s_union_%s_p%02d" % (NAME,TYPE,accid)
     name_dir      = os.path.join(MAC_DIR,name_dir_name)
 
     out_dir       = os.path.join(name_dir,"out")
@@ -103,5 +104,7 @@ for accid in xrange(NACC):
         
     shell("rm -rf %s" % os.path.join(OUT_DIR,name_dir_name))
     shell("mv -f %s %s" % (name_dir,OUT_DIR))
-    
+    fout_all.write("sbatch " + "submit_%s.sh\n" % name_dir_name)
+
+fout_all.close()
     

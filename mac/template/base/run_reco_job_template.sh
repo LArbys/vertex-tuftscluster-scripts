@@ -77,11 +77,13 @@ echo "final ana location: ${anafile_vertex}" >> $logfile
 cfg_file=${jobdir}/XXX
 cat $cfg_file >> $logfile
 
+vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
+
 # command
 echo "RUNNING: python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file}" >> $logfile
 
 # RUN
-python run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} >> $logfile 2>&1 || exit
+python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . >> $logfile 2>&1 || exit
 
 # COPY DATA
 rsync -av ${outfile_ana_temp}.root $anafile_vertex
