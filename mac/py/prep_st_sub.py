@@ -1,27 +1,29 @@
 import os,sys
 from locs import *
 
-if len(sys.argv) != 7:
+if len(sys.argv) != 8:
     print
     print "specify..."
     print
-    print "NAME      = str(sys.argv[1])"
-    print "TYPE      = str(sys.argv[2])"
-    print "RECOCFG   = str(sys.argv[3])"
-    print "TRKCFG    = str(sys.argv[4])"
-    print "LLCUT     = str(sys.argv[5])"
-    print "NACC      = int(sys.argv[6])"
+    print "NAME    = str(sys.argv[1])"
+    print "TYPE    = str(sys.argv[2])"
+    print "TRKCFG  = str(sys.argv[3])"
+    print "TANACFG = str(sys.argv[4])"
+    print "SANACFG = str(sys.argv[5])"
+    print "TARGET  = str(sys.argv[6])"
+    print "NACC    = int(sys.argv[7])"
     print
     print "...bye"
     print
     sys.exit(1)
 
-NAME      = str(sys.argv[1])
-TYPE      = str(sys.argv[2])
-RECOCFG   = str(sys.argv[3])
-TRKCFG    = str(sys.argv[4])
-LLCUT     = str(sys.argv[5])
-NACC      = int(sys.argv[6])
+NAME    = str(sys.argv[1])
+TYPE    = str(sys.argv[2])
+TRKCFG  = str(sys.argv[3])
+TANACFG = str(sys.argv[4])
+SANACFG = str(sys.argv[5])
+TARGET  = str(sys.argv[6])
+NACC    = int(sys.argv[7])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 LL_DIR    = LL_DIR_m[NAME]
@@ -35,10 +37,17 @@ def shell(SS):
     os.system(SS)
 
 #
-# Read how many ssnet files in directory
+# Read how many target files there are
 #
-targ_lc_flist_v = [os.path.join(NAME_DIR,f) for f in os.listdir(NAME_DIR) if f.endswith(".root")]
+targ_lc_flist_v = [os.path.join(TARGET,f) for f in os.listdir(TARGET) if f.endswith(".root") if f.startswith("vertexout")]
 targ_lc_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in targ_lc_flist_v]
+
+#
+# Read SSNet files
+#
+
+targ_ss_flist_v = [os.path.join(NAME_DIR,f) for f in os.listdir(NAME_DIR) if f.endswith(".root")]
+targ_ss_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in targ_ss_flist_v]
 
 #
 # Read how many ll file
@@ -64,11 +73,11 @@ targ_ll_mcinfo_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) 
 #
 # Slice on number of accounts
 #
-fout_all = open(os.path.join(MAC_DIR,"submit_all_%s_rfst_%s.sh" % (NAME,TYPE)),"w+")
+fout_all = open(os.path.join(MAC_DIR,"submit_all_%s_st_%s.sh" % (NAME,TYPE)),"w+")
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_rfst_%s_p%02d" % (NAME,TYPE,accid)
+    name_dir_name = "%s_st_%s_p%02d" % (NAME,TYPE,accid)
     name_dir      = os.path.join(MAC_DIR,name_dir_name)
 
     out_dir        = os.path.join(name_dir,"out")
@@ -91,6 +100,9 @@ for accid in xrange(NACC):
     targ_lc_flist_slice = []
     targ_lc_num_slice   = []
 
+    targ_lc_ss_flist_slice = []
+    targ_lc_ss_num_slice   = []
+
     targ_ll_reco_flist_slice = []
     targ_ll_reco_num_slice   = []
 
@@ -111,6 +123,11 @@ for accid in xrange(NACC):
 
         targ_lc_flist_slice.append(targ_flist)
         targ_lc_num_slice.append(targ_num)
+
+        idx = targ_ss_num_v.index(targ_num)
+
+        targ_lc_ss_flist_slice.append(targ_ss_flist_v[idx])
+        targ_lc_ss_num_slice.append(targ_ss_num_v[idx])
         
         idx0 = targ_ll_reco_num_v.index(lc_to_ll[targ_num])
 
@@ -130,7 +147,8 @@ for accid in xrange(NACC):
 
     for x in zip(targ_ll_reco_num_slice,targ_ll_reco_flist_slice,
                  targ_ll_mcinfo_num_slice,targ_ll_mcinfo_flist_slice,
-                 targ_lc_num_slice,targ_lc_flist_slice):
+                 targ_lc_num_slice,targ_lc_flist_slice,
+                 targ_lc_ss_num_slice,targ_lc_ss_flist_slice):
 
         targ_ll_reco_num   = x[0]
         targ_ll_reco_flist = x[1]
@@ -141,7 +159,15 @@ for accid in xrange(NACC):
         targ_lc_num   = x[4]
         targ_lc_flist = x[5]
 
+        targ_lc_ss_num = x[6]
+        targ_lc_ss_flist = x[7]
+
         f = open(os.path.join(inputlists_dir,"reco_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
+        f.write(targ_lc_ss_flist)
+        f.close()
+        del f
+
+        f = open(os.path.join(inputlists_dir,"vertex_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
         f.write(targ_lc_flist)
         f.close()
         del f
@@ -162,23 +188,24 @@ for accid in xrange(NACC):
 
     shell("scp %s %s" % (os.path.join(work_dir,"jobidlist.txt"),
                          os.path.join(work_dir,"rerunlist.txt")))
-    shell("scp %s %s" % (os.path.join(MAC_DIR,RECOCFG),work_dir))
     shell("scp %s %s" % (os.path.join(MAC_DIR,TRKCFG),work_dir))
+    shell("scp %s %s" % (os.path.join(MAC_DIR,TANACFG),work_dir))
+    shell("scp %s %s" % (os.path.join(MAC_DIR,SANACFG),work_dir))
     
     # copy & replace templates
     data = ""
-    with open(os.path.join(MAC_DIR,"template","run_rfst_job_template.sh"),"r") as f:
+    with open(os.path.join(MAC_DIR,"template","run_st_job_template.sh"),"r") as f:
         data = f.read()
 
-    data = data.replace("XXX",os.path.basename(RECOCFG))
     data = data.replace("YYY",os.path.basename(TRKCFG))
-    data = data.replace("ZZZ",LLCUT)
+    data = data.replace("ZZZ",os.path.basename(TANACFG))
+    data = data.replace("RRR",os.path.basename(SANACFG))
 
-    with open(os.path.join(work_dir,"run_rfst_job.sh"),"w+") as f:
+    with open(os.path.join(work_dir,"run_st_job.sh"),"w+") as f:
         f.write(data)
 
     data = ""
-    with open(os.path.join(MAC_DIR,"template","submit_rfst_job.sh"),"r") as f:
+    with open(os.path.join(MAC_DIR,"template","submit_st_job.sh"),"r") as f:
         data = f.read()
 
     data = data.replace("XXX",name_dir_name)

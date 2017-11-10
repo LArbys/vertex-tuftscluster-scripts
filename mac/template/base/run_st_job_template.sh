@@ -50,12 +50,14 @@ echo "JOBID ${jobid}"
 # make path to input lists
 #
 reco_inputlist=`printf ${inputlist_dir}/reco_inputlist_%04d.txt ${jobid}`
+vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%04d.txt ${jobid}`
 ll_inputlist=`printf ${inputlist_dir}/ll_inputlist_%04d.txt ${jobid}`
 
 #
 # get input files
 #
 input_ssnet_file=`sed -n 1p ${reco_inputlist}`
+input_reco_file=`sed -n 1p ${vertex_inputlist}`
 input_ll_files=`sed -n 1p ${ll_inputlist}`
 
 slurm_folder=`printf slurm_vertex_job%04d ${jobid}`
@@ -77,55 +79,20 @@ echo "ssnet file: ${input_ssnet_file}" >> $logfile
 #
 # go to work directory
 #
-vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
-nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 shower_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
-tracker_dir=${LARCV_BASEDIR}/app/Reco3D/mac/
-#
-# temp output files
-#
-outfile_reco_ana=`printf vertexana_%04d.root ${jobid}`
-outfile_reco_out=`printf vertexout_%04d.root ${jobid}`
 
-outfile_LL_ana=`printf vertexana_nue_LL_filter_%04d.root ${jobid}`
-outfile_LL_out=`printf vertexout_nue_LL_filter_%04d.root ${jobid}`
+tracker_dir=${LARCV_BASEDIR}/app/Reco3D/mac/
+match_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/RecoTruthMatch/mac
 
 # define cfg files
-reco_cfg_file=${jobdir}/XXX
-cat $reco_cfg_file >> $logfile
-
 tracker_cfg_file=${jobdir}/YYY
 cat $tracker_cfg_file >> $logfile
 
-#
-# RUN reco
-#
-echo " "
-echo " "
-echo " "
-echo " "
-echo "run reco..." >> $logfile
-python ${vtx_reco_dir}/run_reco.py ${reco_cfg_file} ${outfile_reco_ana} ${outfile_reco_out} ${input_ssnet_file} . >> $logfile 2>&1 || exit
-echo "...reco complete" >> $logfile
-echo " "
-echo " "
-echo " "
-echo " "
+tracker_ana_cfg_file=${jobdir}/ZZZ
+cat $tracker_ana_cfg_file >> $logfile
 
-#
-# RUN filter
-#
-echo " "
-echo " "
-echo " "
-echo " "
-echo "run LL..." >> $logfile
-python ${nue_ll_dir}/filter_nue_likelihood.py ${outfile_reco_ana} ${outfile_reco_out} ZZZ . >> $logfile 2>&1 || exit
-echo "... LL complete" >> $logfile
-echo " "
-echo " "
-echo " "
-echo " "
+shower_ana_cfg_file=${jobdir}/RRR
+cat $shower_ana_cfg_file >> $logfile
 
 #
 # RUN shower reco
@@ -134,12 +101,21 @@ echo " "
 echo " "
 echo " "
 echo " "
+
 echo "run shower..." >> $logfile
-python ${shower_dir}/reco_shower.py ${outfile_LL_out} ${input_ll_files} . >> $logfile 2>&1 || exit
+python ${shower_dir}/reco_shower.py ${input_reco_file} ${input_ll_files} . 0 >> $logfile 2>&1 || exit
 echo "...shower complete" >> $logfile
+
 echo "analyze shower..." >> $logfile
-python ${shower_dir}/run_ShowerQuality_nueshowers.py shower_reco_out_${jobid}.root . >> $logfile 2>&1 || exit
+echo "python ${shower_dir}/run_ShowerQuality.py shower_reco_out_${jobid}.root ." >> $logfile
+python ${shower_dir}/run_ShowerQuality.py shower_reco_out_${jobid}.root . >> $logfile 2>&1 || exit
 echo "...shower analyzed" >> $logfile
+
+echo "match shower..." >> $logfile
+echo "python ${match_dir}/ana_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root" >> $logfile
+python ${match_dir}/ana_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root . >> $logfile 2>&1 || exit
+echo "... match complete" >> $logfile
+
 echo " "
 echo " "
 echo " "
@@ -152,28 +128,27 @@ echo " "
 echo " "
 echo " "
 echo " "
+
 echo "run track..." >> $logfile
-python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${outfile_LL_out} . >> $logfile 2>&1 || exit
+echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_reco_file} ." >> $logfile
+python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_reco_file} . >> $logfile 2>&1 || exit
 echo "...track complete" >> $logfile
+
+echo "reco match track..." >> $logfile
+echo "python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} ${input_reco_file} tracker_reco_${jobid}.root" >> $logfile
+python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} ${input_reco_file} tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
+echo "...reco match complete" >> $logfile
+
+echo "truth match track..." >> $logfile
+echo "python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root" >> $logfile
+python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
+echo "...truth match complete" >> $logfile
+
 echo " "
 echo " "
 echo " "
 echo " "
 
-#
-# RUN final TTree
-#
-echo " "
-echo " "
-echo " "
-echo " "
-echo "finalize TTree..." >> $logfile
-python ${final_file_dir}/make_ttree.py ana_LL_sel_df_${jobid}.pkl showerqualsingle_${jobid}.root tracker_anaout_${jobid}.root . >> $logfile 2>&1 || exit
-echo "...finalized TTree" >> $logfile
-echo " "
-echo " "
-echo " "
-echo " "
 #
 # Copy to output
 #

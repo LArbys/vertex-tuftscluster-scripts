@@ -50,12 +50,14 @@ echo "JOBID ${jobid}"
 # make path to input lists
 #
 reco_inputlist=`printf ${inputlist_dir}/reco_inputlist_%04d.txt ${jobid}`
+filter_inputlist=`printf ${inputlist_dir}/filter_inputlist_%04d.txt ${jobid}`
 ll_inputlist=`printf ${inputlist_dir}/ll_inputlist_%04d.txt ${jobid}`
 
 #
 # get input files
 #
 input_ssnet_file=`sed -n 1p ${reco_inputlist}`
+input_filter_files=`sed -n 1p ${filter_inputlist}`
 input_ll_files=`sed -n 1p ${ll_inputlist}`
 
 slurm_folder=`printf slurm_vertex_job%04d ${jobid}`
@@ -72,45 +74,22 @@ touch ${logfile}
 # echo into it
 #
 echo "RUNNING VERTEX JOB ${jobid}" > $logfile
-echo "ssnet file: ${input_ssnet_file}" >> $logfile
 
 #
 # go to work directory
 #
-vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 shower_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
 tracker_dir=${LARCV_BASEDIR}/app/Reco3D/mac/
-#
-# temp output files
-#
-outfile_reco_ana=`printf vertexana_%04d.root ${jobid}`
-outfile_reco_out=`printf vertexout_%04d.root ${jobid}`
-
-outfile_LL_ana=`printf vertexana_nue_LL_filter_%04d.root ${jobid}`
-outfile_LL_out=`printf vertexout_nue_LL_filter_%04d.root ${jobid}`
+final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 
 # define cfg files
-reco_cfg_file=${jobdir}/XXX
-cat $reco_cfg_file >> $logfile
-
 tracker_cfg_file=${jobdir}/YYY
 cat $tracker_cfg_file >> $logfile
 
-#
-# RUN reco
-#
-echo " "
-echo " "
-echo " "
-echo " "
-echo "run reco..." >> $logfile
-python ${vtx_reco_dir}/run_reco.py ${reco_cfg_file} ${outfile_reco_ana} ${outfile_reco_out} ${input_ssnet_file} . >> $logfile 2>&1 || exit
-echo "...reco complete" >> $logfile
-echo " "
-echo " "
-echo " "
-echo " "
+# define LL out
+outfile_LL_ana=`printf vertexana_nue_LL_filter_%04d.root ${jobid}`
+outfile_LL_out=`printf vertexout_nue_LL_filter_%04d.root ${jobid}`
 
 #
 # RUN filter
@@ -120,7 +99,7 @@ echo " "
 echo " "
 echo " "
 echo "run LL..." >> $logfile
-python ${nue_ll_dir}/filter_nue_likelihood.py ${outfile_reco_ana} ${outfile_reco_out} ZZZ . >> $logfile 2>&1 || exit
+python ${nue_ll_dir}/filter_nue_likelihood.py ${input_filter_files} ZZZ . >> $logfile 2>&1 || exit
 echo "... LL complete" >> $logfile
 echo " "
 echo " "

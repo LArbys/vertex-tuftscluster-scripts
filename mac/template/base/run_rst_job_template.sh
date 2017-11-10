@@ -78,17 +78,18 @@ echo "ssnet file: ${input_ssnet_file}" >> $logfile
 # go to work directory
 #
 vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
-nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
+nue_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 shower_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
 tracker_dir=${LARCV_BASEDIR}/app/Reco3D/mac/
+final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 #
 # temp output files
 #
 outfile_reco_ana=`printf vertexana_%04d.root ${jobid}`
 outfile_reco_out=`printf vertexout_%04d.root ${jobid}`
 
-outfile_LL_ana=`printf vertexana_nue_LL_filter_%04d.root ${jobid}`
-outfile_LL_out=`printf vertexout_nue_LL_filter_%04d.root ${jobid}`
+outfile_nue_ana=`printf vertexana_nue_filter_%04d.root ${jobid}`
+outfile_nue_out=`printf vertexout_nue_filter_%04d.root ${jobid}`
 
 # define cfg files
 reco_cfg_file=${jobdir}/XXX
@@ -119,9 +120,9 @@ echo " "
 echo " "
 echo " "
 echo " "
-echo "run LL..." >> $logfile
-python ${nue_ll_dir}/filter_nue_likelihood.py ${outfile_reco_ana} ${outfile_reco_out} ZZZ . >> $logfile 2>&1 || exit
-echo "... LL complete" >> $logfile
+echo "run nue..." >> $logfile
+python ${nue_dir}/filter_nue.py ${outfile_reco_ana} ${outfile_reco_out} . >> $logfile 2>&1 || exit
+echo "... nue complete" >> $logfile
 echo " "
 echo " "
 echo " "
@@ -135,7 +136,7 @@ echo " "
 echo " "
 echo " "
 echo "run shower..." >> $logfile
-python ${shower_dir}/reco_shower.py ${outfile_LL_out} ${input_ll_files} . >> $logfile 2>&1 || exit
+python ${shower_dir}/reco_shower.py ${outfile_nue_out} ${input_ll_files} . >> $logfile 2>&1 || exit
 echo "...shower complete" >> $logfile
 echo "analyze shower..." >> $logfile
 python ${shower_dir}/run_ShowerQuality_nueshowers.py shower_reco_out_${jobid}.root . >> $logfile 2>&1 || exit
@@ -153,27 +154,13 @@ echo " "
 echo " "
 echo " "
 echo "run track..." >> $logfile
-python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${outfile_LL_out} . >> $logfile 2>&1 || exit
+python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${outfile_nue_out} . >> $logfile 2>&1 || exit
 echo "...track complete" >> $logfile
 echo " "
 echo " "
 echo " "
 echo " "
 
-#
-# RUN final TTree
-#
-echo " "
-echo " "
-echo " "
-echo " "
-echo "finalize TTree..." >> $logfile
-python ${final_file_dir}/make_ttree.py ana_LL_sel_df_${jobid}.pkl showerqualsingle_${jobid}.root tracker_anaout_${jobid}.root . >> $logfile 2>&1 || exit
-echo "...finalized TTree" >> $logfile
-echo " "
-echo " "
-echo " "
-echo " "
 #
 # Copy to output
 #
