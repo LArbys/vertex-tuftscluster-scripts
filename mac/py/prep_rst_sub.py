@@ -195,6 +195,7 @@ for accid in xrange(NACC):
     shell("rm -rf %s" % os.path.join(OUT_DIR,name_dir_name))
     shell("mv -f %s %s" % (name_dir,OUT_DIR))
     fout_all.write("sbatch " + "submit_%s.sh\n" % name_dir_name)
+    break
 
 fout_all.close()
     

@@ -51,40 +51,63 @@ inputlist=`printf ${inputlist_dir}/inputlist_%04d.txt ${jobid}`
 input_ssnet_file=`sed -n 1p ${inputlist}`
 
 slurm_folder=`printf slurm_vertex_job%04d ${jobid}`
+
 mkdir -p ${slurm_folder}
 
+cd $slurm_folder
+
 # Make log file
-logfile=`printf ${slurm_folder}/log_vertex_%04d.txt ${jobid}`
+logfile=`printf log_vertex_%04d.txt ${jobid}`
 
 # echo into it
 echo "RUNNING VERTEX JOB ${jobid}" > $logfile
 echo "ssnet file: ${input_ssnet_file}" >> $logfile
 
 # temp output files
-outfile_ana_temp=`printf ${slurm_folder}/vertexana_%04d.root ${jobid}`
-outfile_out_temp=`printf ${slurm_folder}/vertexout_%04d.root ${jobid}`
+outfile_ana_temp=`printf vertexana_%04d.root ${jobid}`
+outfile_out_temp=`printf vertexout_%04d.root ${jobid}`
 
 echo "temporary ana file: ${outfile_ana_temp}" >> $logfile
 echo "temporary out file: ${outfile_out_temp}" >> $logfile
 
-# define output
-outfile_vertex=`printf ${output_dir}/vertexout_%04d.root ${jobid}`
-anafile_vertex=`printf ${output_dir}/vertexana_%04d.root ${jobid}`
-echo "final output location: ${outfile_vertex}" >> $logfile
-echo "final ana location: ${anafile_vertex}" >> $logfile
 
 # define cfg file
 cfg_file=${jobdir}/XXX
 cat $cfg_file >> $logfile
 
 vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
+nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 
-# command
-echo "RUNNING: python ${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/run.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file}" >> $logfile
-
-# RUN
+# RECO
+echo " "
+echo " "
+echo " "
+echo " "
+echo "reco..." >> $logfile
+echo "python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . " >> $logfile
 python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . >> $logfile 2>&1 || exit
+echo "..recoed" >> $logfile
+echo " "
+echo " "
+echo " "
+echo " "
+
+# PKL
+echo " "
+echo " "
+echo " "
+echo " "
+echo "pickle..." >> $logfile
+echo "python ${nue_ll_dir}/dump_pickle.py ${outfile_ana_temp} . " >> $logfile
+python ${nue_ll_dir}/dump_pickle.py ${outfile_ana_temp} . >> $logfile 2>&1 || exit
+echo "..pickled" >> $logfile
+echo " "
+echo " "
+echo " "
+echo " "
+
 
 # COPY DATA
-rsync -av ${outfile_ana_temp} $anafile_vertex
-rsync -av ${outfile_out_temp} $outfile_vertex
+rsync -av *.root ${output_dir}
+rsync -av *.pkl ${output_dir}
+

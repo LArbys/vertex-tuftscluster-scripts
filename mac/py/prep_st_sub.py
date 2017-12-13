@@ -1,29 +1,31 @@
 import os,sys
 from locs import *
 
-if len(sys.argv) != 8:
+if len(sys.argv) != 9:
     print
     print "specify..."
     print
-    print "NAME    = str(sys.argv[1])"
-    print "TYPE    = str(sys.argv[2])"
-    print "TRKCFG  = str(sys.argv[3])"
-    print "TANACFG = str(sys.argv[4])"
-    print "SANACFG = str(sys.argv[5])"
-    print "TARGET  = str(sys.argv[6])"
-    print "NACC    = int(sys.argv[7])"
+    print "NAME      = str(sys.argv[1])"
+    print "TYPE      = str(sys.argv[2])"
+    print "TRKCFG    = str(sys.argv[3])"
+    print "TANACFG   = str(sys.argv[4])"
+    print "SANACFG   = str(sys.argv[5])"
+    print "RECLUSTER = int(sys.argv[6])"
+    print "TARGET    = str(sys.argv[7])"
+    print "NACC      = int(sys.argv[8])"
     print
     print "...bye"
     print
     sys.exit(1)
 
-NAME    = str(sys.argv[1])
-TYPE    = str(sys.argv[2])
-TRKCFG  = str(sys.argv[3])
-TANACFG = str(sys.argv[4])
-SANACFG = str(sys.argv[5])
-TARGET  = str(sys.argv[6])
-NACC    = int(sys.argv[7])
+NAME      = str(sys.argv[1])
+TYPE      = str(sys.argv[2])
+TRKCFG    = str(sys.argv[3])
+TANACFG   = str(sys.argv[4])
+SANACFG   = str(sys.argv[5])
+RECLUSTER = int(sys.argv[6])
+TARGET    = str(sys.argv[7])
+NACC      = int(sys.argv[8])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 LL_DIR    = LL_DIR_m[NAME]
@@ -48,6 +50,12 @@ targ_lc_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f i
 
 targ_ss_flist_v = [os.path.join(NAME_DIR,f) for f in os.listdir(NAME_DIR) if f.endswith(".root")]
 targ_ss_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in targ_ss_flist_v]
+
+#
+# Read pickle files
+#
+targ_comb_pkl_flist_v = [os.path.join(TARGET,f) for f in os.listdir(TARGET) if f.startswith("ana_comb") if f.endswith(".pkl")]
+targ_comb_pkl_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in targ_comb_pkl_flist_v]
 
 #
 # Read how many ll file
@@ -172,6 +180,12 @@ for accid in xrange(NACC):
         f.close()
         del f
 
+        f = open(os.path.join(inputlists_dir,"pkl_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
+        tidx = targ_comb_pkl_num_v.index(targ_lc_num)
+        f.write(targ_comb_pkl_flist_v[tidx])
+        f.close()
+        del f
+
         f = open(os.path.join(inputlists_dir,"ll_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
         f.write(targ_ll_reco_flist)
         f.write(" ")
@@ -200,6 +214,7 @@ for accid in xrange(NACC):
     data = data.replace("YYY",os.path.basename(TRKCFG))
     data = data.replace("ZZZ",os.path.basename(TANACFG))
     data = data.replace("RRR",os.path.basename(SANACFG))
+    data = data.replace("AAA",str(RECLUSTER))
 
     with open(os.path.join(work_dir,"run_st_job.sh"),"w+") as f:
         f.write(data)

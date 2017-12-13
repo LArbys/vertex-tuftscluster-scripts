@@ -7,7 +7,6 @@
 # expect to be in cloned repo of vertex-tuftcluster-scripts
 # example, for taritree this is in: ~/grid_jobs/vertex-tuftcluster-scripts
 
-
 # Get arguments
 jobdir=$1
 inputlist_dir=$2
@@ -51,6 +50,7 @@ echo "JOBID ${jobid}"
 #
 reco_inputlist=`printf ${inputlist_dir}/reco_inputlist_%04d.txt ${jobid}`
 vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%04d.txt ${jobid}`
+pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%04d.txt ${jobid}`
 ll_inputlist=`printf ${inputlist_dir}/ll_inputlist_%04d.txt ${jobid}`
 
 #
@@ -58,6 +58,7 @@ ll_inputlist=`printf ${inputlist_dir}/ll_inputlist_%04d.txt ${jobid}`
 #
 input_ssnet_file=`sed -n 1p ${reco_inputlist}`
 input_reco_file=`sed -n 1p ${vertex_inputlist}`
+input_pkl_file=`sed -n 1p ${pkl_inputlist}`
 input_ll_files=`sed -n 1p ${ll_inputlist}`
 
 slurm_folder=`printf slurm_vertex_job%04d ${jobid}`
@@ -84,6 +85,10 @@ shower_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
 tracker_dir=${LARCV_BASEDIR}/app/Reco3D/mac/
 match_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/RecoTruthMatch/mac
 
+tracker_ana_dir=${LARLITE_USERDEVDIR}/RecoTool/TrackReco3D/mac
+
+nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
+
 # define cfg files
 tracker_cfg_file=${jobdir}/YYY
 cat $tracker_cfg_file >> $logfile
@@ -103,7 +108,8 @@ echo " "
 echo " "
 
 echo "run shower..." >> $logfile
-python ${shower_dir}/reco_shower.py ${input_reco_file} ${input_ll_files} . 0 >> $logfile 2>&1 || exit
+echo "python ${shower_dir}/reco_recluster_shower.py ${input_reco_file} ${input_ll_files} . 0 AAA" >> $logfile
+python ${shower_dir}/reco_recluster_shower.py ${input_reco_file} ${input_ll_files} . 0 AAA >> $logfile 2>&1 || exit
 echo "...shower complete" >> $logfile
 
 echo "analyze shower..." >> $logfile
@@ -112,8 +118,8 @@ python ${shower_dir}/run_ShowerQuality.py shower_reco_out_${jobid}.root . >> $lo
 echo "...shower analyzed" >> $logfile
 
 echo "match shower..." >> $logfile
-echo "python ${match_dir}/ana_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root" >> $logfile
-python ${match_dir}/ana_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root . >> $logfile 2>&1 || exit
+echo "python ${match_dir}/ana_truth_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root" >> $logfile
+python ${match_dir}/ana_truth_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root . >> $logfile 2>&1 || exit
 echo "... match complete" >> $logfile
 
 echo " "
@@ -134,6 +140,11 @@ echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file
 python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_reco_file} . >> $logfile 2>&1 || exit
 echo "...track complete" >> $logfile
 
+echo "analyze track..." >> $logfile
+echo "python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_ll_files} . >> $logfile 2>&1 || exit"
+python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_ll_files} . >> $logfile 2>&1 || exit
+echo "... analyze complete" >> $logfile
+
 echo "reco match track..." >> $logfile
 echo "python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} ${input_reco_file} tracker_reco_${jobid}.root" >> $logfile
 python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} ${input_reco_file} tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
@@ -144,6 +155,35 @@ echo "python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${inp
 python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
 echo "...truth match complete" >> $logfile
 
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# RUN track+shower combine
+#
+echo " "
+echo " "
+echo " "
+echo " "
+echo "python ${nue_ll_dir}/combine_st.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root trackqualsingle_${jobid}.root tracker_anaout_${jobid}.root track_truth_match_${jobid}.root track_pgraph_match_${jobid}.root ." >> $logfile
+python ${nue_ll_dir}/combine_st.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root trackqualsingle_${jobid}.root tracker_anaout_${jobid}.root track_truth_match_${jobid}.root track_pgraph_match_${jobid}.root . >> $logfile 2>&1 || exit
+echo " "
+echo " "
+echo " "
+echo " "
+
+
+#
+# RUN vertex+track+shower combine
+#
+echo " "
+echo " "
+echo " "
+echo " "
+echo "python ${nue_ll_dir}/combine_rst.py ${input_pkl_file} st_comb_df_${jobid} ." >> $logfile
+python ${nue_ll_dir}/combine_rst.py ${input_pkl_file} st_comb_df_${jobid}.pkl . >> $logfile 2>&1 || exit
 echo " "
 echo " "
 echo " "
