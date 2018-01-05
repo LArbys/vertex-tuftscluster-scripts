@@ -48,10 +48,10 @@ echo "JOBID ${jobid}"
 #
 # make path to input lists
 #
-reco_inputlist=`printf ${inputlist_dir}/reco_inputlist_%04d.txt ${jobid}`
-vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%04d.txt ${jobid}`
-pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%04d.txt ${jobid}`
-ll_inputlist=`printf ${inputlist_dir}/ll_inputlist_%04d.txt ${jobid}`
+reco_inputlist=`printf ${inputlist_dir}/reco_inputlist_%05d.txt ${jobid}`
+vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%05d.txt ${jobid}`
+pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%05d.txt ${jobid}`
+ll_inputlist=`printf ${inputlist_dir}/ll_inputlist_%05d.txt ${jobid}`
 
 #
 # get input files
@@ -61,14 +61,14 @@ input_reco_file=`sed -n 1p ${vertex_inputlist}`
 input_pkl_file=`sed -n 1p ${pkl_inputlist}`
 input_ll_files=`sed -n 1p ${ll_inputlist}`
 
-slurm_folder=`printf slurm_vertex_job%04d ${jobid}`
+slurm_folder=`printf slurm_st_job%05d ${jobid}`
 mkdir -p ${slurm_folder}
 cd ${slurm_folder}
 
 #
 # make log file
 #
-logfile=`printf log_vertex_%04d.txt ${jobid}`
+logfile=`printf log_st_%05d.txt ${jobid}`
 touch ${logfile}
 
 #

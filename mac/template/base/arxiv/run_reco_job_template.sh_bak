@@ -45,27 +45,27 @@ let jobid=`sed -n ${proc_line}p ${jobid_list}`
 echo "JOBID ${jobid}"
 
 # make path to input list
-inputlist=`printf ${inputlist_dir}/inputlist_%05d.txt ${jobid}`
+inputlist=`printf ${inputlist_dir}/inputlist_%04d.txt ${jobid}`
 
 # get input files
 input_ssnet_file=`sed -n 1p ${inputlist}`
 
-slurm_folder=`printf slurm_vertex_job%05d ${jobid}`
+slurm_folder=`printf slurm_vertex_job%04d ${jobid}`
 
 mkdir -p ${slurm_folder}
 
 cd $slurm_folder
 
 # Make log file
-logfile=`printf log_vertex_%05d.txt ${jobid}`
+logfile=`printf log_vertex_%04d.txt ${jobid}`
 
 # echo into it
 echo "RUNNING VERTEX JOB ${jobid}" > $logfile
 echo "ssnet file: ${input_ssnet_file}" >> $logfile
 
 # temp output files
-outfile_ana_temp=`printf vertexana_%05d.root ${jobid}`
-outfile_out_temp=`printf vertexout_%05d.root ${jobid}`
+outfile_ana_temp=`printf vertexana_%04d.root ${jobid}`
+outfile_out_temp=`printf vertexout_%04d.root ${jobid}`
 
 echo "temporary ana file: ${outfile_ana_temp}" >> $logfile
 echo "temporary out file: ${outfile_out_temp}" >> $logfile

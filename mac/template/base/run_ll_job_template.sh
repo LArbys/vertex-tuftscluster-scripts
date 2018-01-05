@@ -7,7 +7,6 @@
 # expect to be in cloned repo of vertex-tuftcluster-scripts
 # example, for taritree this is in: ~/grid_jobs/vertex-tuftcluster-scripts
 
-
 # Get arguments
 jobdir=$1
 inputlist_dir=$2
@@ -39,75 +38,88 @@ if [ "$NUM_PROCS" -lt "${SLURM_PROCID}" ]; then
     return
 fi
 
-# Get job id
+#
+# get job id
+#
 let "proc_line=${SLURM_PROCID}+1"
 let jobid=`sed -n ${proc_line}p ${jobid_list}`
 echo "JOBID ${jobid}"
 
-# make path to input list
-inputlist=`printf ${inputlist_dir}/inputlist_%05d.txt ${jobid}`
+#
+# make path to input lists
+#
+pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%04d.txt ${jobid}`
 
+#
 # get input files
-input_ssnet_file=`sed -n 1p ${inputlist}`
+#
+input_pkl_file=`sed -n 1p ${pkl_inputlist}`
 
-slurm_folder=`printf slurm_vertex_job%05d ${jobid}`
-
+slurm_folder=`printf slurm_ll_job%04d ${jobid}`
 mkdir -p ${slurm_folder}
+cd ${slurm_folder}
 
-cd $slurm_folder
+#
+# make log file
+#
+logfile=`printf log_ll_%04d.txt ${jobid}`
+touch ${logfile}
 
-# Make log file
-logfile=`printf log_vertex_%05d.txt ${jobid}`
-
+#
 # echo into it
-echo "RUNNING VERTEX JOB ${jobid}" > $logfile
-echo "ssnet file: ${input_ssnet_file}" >> $logfile
+#
+echo "RUNNING LL JOB ${jobid}" > $logfile
 
-# temp output files
-outfile_ana_temp=`printf vertexana_%05d.root ${jobid}`
-outfile_out_temp=`printf vertexout_%05d.root ${jobid}`
+#
+# go to work directory
+#
 
-echo "temporary ana file: ${outfile_ana_temp}" >> $logfile
-echo "temporary out file: ${outfile_out_temp}" >> $logfile
-
-
-# define cfg file
-cfg_file=${jobdir}/XXX
-cat $cfg_file >> $logfile
-
-vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
+final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 
-# RECO
-echo " "
-echo " "
-echo " "
-echo " "
-echo "reco..." >> $logfile
-echo "python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . " >> $logfile
-python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . >> $logfile 2>&1 || exit
-echo "..recoed" >> $logfile
+#
+# RUN LL 
+#
 echo " "
 echo " "
 echo " "
 echo " "
 
-# PKL
-echo " "
-echo " "
-echo " "
-echo " "
-echo "pickle..." >> $logfile
-echo "python ${nue_ll_dir}/dump_pickle.py ${outfile_ana_temp} . " >> $logfile
-python ${nue_ll_dir}/dump_pickle.py ${outfile_ana_temp} . >> $logfile 2>&1 || exit
-echo "..pickled" >> $logfile
+pdf_file=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/bin/nue_pdfs.root
+line_file=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/bin/nue_line_file.root
+
+echo "run LL..." >> $logfile
+echo "python ${nue_ll_dir}/run_likelihood.py ${input_pkl_file} ${pdf_file} ${line_file} AAA ." >> $logfile
+python ${nue_ll_dir}/run_likelihood.py ${input_pkl_file} ${pdf_file} ${line_file} AAA . >> $logfile 2>&1 || exit
+echo "... LL complete" >> $logfile
+
 echo " "
 echo " "
 echo " "
 echo " "
 
+#
+# RUN final file
+#
+echo " "
+echo " "
+echo " "
+echo " "
 
-# COPY DATA
+echo "run final file..." >> $logfile
+echo "python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl AAA ." >> $logfile
+python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl AAA . >> $logfile 2>&1 || exit
+echo "...final file complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# Copy to output
+#
+echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-
+echo "...copied" >> $logfile

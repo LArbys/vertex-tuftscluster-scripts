@@ -20,14 +20,20 @@ TYPE  = str(sys.argv[2])
 CFG   = str(sys.argv[3])
 NACC  = int(sys.argv[4])
 
-NAME_DIR  = DATA_DIR_m[NAME]
-PY_DIR   = os.path.dirname(os.path.realpath(__file__))
-MAC_DIR   = os.path.join(PY_DIR,"..")
-OUT_DIR   = os.path.join(PY_DIR,"../..")
+NAME_DIR   = DATA_DIR_m[NAME]
+PY_DIR     = os.path.dirname(os.path.realpath(__file__))
+MAC_DIR    = os.path.join(PY_DIR,"..")
+OUT_FOLDER = "%s_reco_%s" % (NAME,TYPE)
+OUT_DIR    = os.path.join(PY_DIR,"../..",OUT_FOLDER)
+
+SCRIPT_DIR = os.path.join(MAC_DIR,"submit_reco")
 
 def shell(SS):
     print SS
     os.system(SS)
+
+shell("rm -rf %s" % OUT_DIR)
+shell("mkdir -p %s" % OUT_DIR)
 
 #
 # Read how many files in directory
@@ -35,19 +41,20 @@ def shell(SS):
 flist_v = [os.path.join(NAME_DIR,f) for f in os.listdir(NAME_DIR) if f.endswith(".root")]
 num_v   = [os.path.basename(f).split(".")[0].split("_")[-1] for f in flist_v]
 
+
 #
 # Slice on number of accounts
 #
-fout_all = open(os.path.join(MAC_DIR,"submit_all_%s_reco_%s.sh" % (NAME,TYPE)),"w+")
+fout_all = open(os.path.join(MAC_DIR,"submit_all_%s.sh" % (OUT_FOLDER)),"w+")
 for accid in xrange(NACC):
     
     # set paths
-    name_dir_name = "%s_reco_%s_p%02d" % (NAME,TYPE,accid)
-    name_dir      = os.path.join(MAC_DIR,name_dir_name)
+    name_dir_name  = "%s_p%02d" % (OUT_FOLDER,accid)
+    name_dir       = os.path.join(MAC_DIR,name_dir_name)
 
-    out_dir       = os.path.join(name_dir,"out")
-    work_dir      = os.path.join(name_dir,"work")
-    inputlists_dir= os.path.join(work_dir,"inputlists")
+    out_dir        = os.path.join(name_dir,"out")
+    work_dir       = os.path.join(name_dir,"work")
+    inputlists_dir = os.path.join(work_dir,"inputlists")
 
     shell("mkdir -p %s" % name_dir)
     shell("mkdir -p %s" % out_dir)
@@ -65,7 +72,7 @@ for accid in xrange(NACC):
     shell("touch %s" % os.path.join(work_dir,"jobidlist.txt"))    
     
     for num,flist in zip(num_slice,flist_slice):
-        f = open(os.path.join(inputlists_dir,"inputlist_%04d.txt" % int(num)),"w+")
+        f = open(os.path.join(inputlists_dir,"inputlist_%05d.txt" % int(num)),"w+")
         f.write(flist)
         f.close()
         del f
@@ -95,15 +102,16 @@ for accid in xrange(NACC):
     with open(os.path.join(MAC_DIR,"template","submit_reco_job.sh"),"r") as f:
         data = f.read()
 
-    data = data.replace("XXX",name_dir_name)
+    data = data.replace("XXX",os.path.join(OUT_DIR,name_dir_name))
     data = data.replace("YYY",str(len(num_slice)))
+    data = data.replace("CCC",name_dir_name)
 
-    with open(os.path.join(MAC_DIR,"submit_%s.sh" % name_dir_name),"w+") as f:
+    with open(os.path.join(SCRIPT_DIR,"submit_%s.sh" % name_dir_name),"w+") as f:
         f.write(data)
         
     shell("rm -rf %s" % os.path.join(OUT_DIR,name_dir_name))
     shell("mv -f %s %s" % (name_dir,OUT_DIR))
-    fout_all.write("sbatch " + "submit_%s.sh\n" % name_dir_name)
+    fout_all.write("sbatch" + " " + os.path.join(SCRIPT_DIR,"submit_%s.sh\n" % name_dir_name))
 
 fout_all.close()
     

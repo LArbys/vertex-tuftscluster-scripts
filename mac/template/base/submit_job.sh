@@ -1,18 +1,18 @@
 #!/bin/bash
 #
-#SBATCH --job-name=ZZZ_vertex_XXX
-#SBATCH --output=log/ZZZ_vertex_log_XXX.txt
+#SBATCH --job-name=ZZZ_CCC
+#SBATCH --output=AAA/mac/log/ZZZ_log_CCC.txt
 #
 #SBATCH --ntasks=YYY
 #SBATCH --time=4:00:00
 #SBATCH --mem-per-cpu=2000
 
 CONTAINER=AAA/image/BBB
-WORKDIR=AAA/XXX/work
+WORKDIR=XXX/work
 INPUTLISTDIR=${WORKDIR}/inputlists
 JOBIDLIST=${WORKDIR}/rerunlist.txt
 
-OUTPUTDIR=AAA/XXX/out
+OUTPUTDIR=XXX/out
 
 mkdir -p ${OUTPUTDIR}
 module load singularity
