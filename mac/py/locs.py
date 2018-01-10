@@ -38,12 +38,14 @@ DATA_DIR_m['extbnb_rep_p01_v4'] = "/cluster/kappa/90-days-archive/wongjiradlab/l
 #DATA_DIR_m['bnbnu_cocktail_p01'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/comparison_samples/bnbnu_cocktail_mcc8.3/out_week101317/ssnet_p01'
 
 DATA_DIR_m['mcc8v3_corsika_p00'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v3_corsika_p00/ssnet'
-DATA_DIR_m['mcc8v3_coriska_p01'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v3_corsika_p01/ssnet'
+DATA_DIR_m['mcc8v3_corsika_p01'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v3_corsika_p01/ssnet'
+DATA_DIR_m['mcc8v3_corsika_p02'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v3_corsika_p02/ssnet'
 
 DATA_DIR_m['mcc8v4_cocktail_p00'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v4_cocktail_p00/ssnet'
 DATA_DIR_m['mcc8v4_cocktail_p01'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v4_cocktail_p01/ssnet'
 DATA_DIR_m['mcc8v4_cocktail_p02'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v4_cocktail_p02/ssnet'
 DATA_DIR_m['mcc8v4_cocktail_p03'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v4_cocktail_p03/ssnet'
+DATA_DIR_m['mcc8v4_cocktail_p04'] = '/cluster/kappa/90-days-archive/wongjiradlab/larbys/data/symlinks/mcc8v4_cocktail_p04/ssnet'
 
 #
 # larlite stuff
@@ -85,6 +87,11 @@ LL_DIR_m['mcc8v4_cocktail_p00'] = "/cluster/kappa/90-days-archive/wongjiradlab/v
 LL_DIR_m['mcc8v4_cocktail_p01'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v4_cocktail_p01/larlite"
 LL_DIR_m['mcc8v4_cocktail_p02'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v4_cocktail_p02/larlite"
 LL_DIR_m['mcc8v4_cocktail_p03'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v4_cocktail_p03/larlite"
+LL_DIR_m['mcc8v4_cocktail_p04'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v4_cocktail_p04/larlite"
+
+LL_DIR_m['mcc8v3_corsika_p00'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v3_corsika_p00/larlite"
+LL_DIR_m['mcc8v3_corsika_p01'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v3_corsika_p01/larlite"
+LL_DIR_m['mcc8v3_corsika_p02'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/mcc8v3_corsika_p02/larlite"
 
 UNION_DIR_m = {}
 UNION_DIR_m['1e1p'] = "/cluster/kappa/90-days-archive/wongjiradlab/vgenty/data/comparison_samples/1e1p/ssnet_union/"

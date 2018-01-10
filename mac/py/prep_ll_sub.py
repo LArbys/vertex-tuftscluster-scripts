@@ -1,25 +1,29 @@
 import os,sys
 from locs import *
 
-if len(sys.argv) != 6:
+if len(sys.argv) != 8:
     print
     print "specify..."
     print
-    print "NAME      = str(sys.argv[1])"
-    print "TYPE      = str(sys.argv[2])"
-    print "IS_MC     = int(sys.argv[3])"
-    print "TARGET    = str(sys.argv[4])"
-    print "NACC      = int(sys.argv[5])"
+    print "NAME       = str(sys.argv[1])"
+    print "TYPE       = str(sys.argv[2])"
+    print "IS_MC      = int(sys.argv[3])"
+    print "FILTER     = int(sys.argv[4])"
+    print "VTX_TARGET = str(sys.argv[5])"
+    print "ST_TARGET  = str(sys.argv[6])"
+    print "NACC       = int(sys.argv[7])"
     print
     print "...bye"
     print
     sys.exit(1)
 
-NAME      = str(sys.argv[1])
-TYPE      = str(sys.argv[2])
-IS_MC     = int(sys.argv[3])
-TARGET    = str(sys.argv[4])
-NACC      = int(sys.argv[5])
+NAME       = str(sys.argv[1])
+TYPE       = str(sys.argv[2])
+IS_MC      = int(sys.argv[3])
+FILTER     = int(sys.argv[4])
+VTX_TARGET = str(sys.argv[5])
+ST_TARGET  = str(sys.argv[6])
+NACC       = int(sys.argv[7])
 
 NAME_DIR  = DATA_DIR_m[NAME]
 
@@ -38,9 +42,15 @@ shell("rm -rf %s" % OUT_DIR)
 shell("mkdir -p %s" % OUT_DIR)
 
 #
+# Read vertex files
+#
+targ_lc_flist_v = [os.path.join(VTX_TARGET,f) for f in os.listdir(VTX_TARGET) if f.endswith(".root") if f.startswith("vertexout")]
+targ_lc_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in targ_lc_flist_v]
+
+#
 # Read pickle files
 #
-targ_pkl_flist_v = [os.path.join(TARGET,f) for f in os.listdir(TARGET) if f.startswith("rst_comb_df") if f.endswith(".pkl")]
+targ_pkl_flist_v = [os.path.join(ST_TARGET,f) for f in os.listdir(ST_TARGET) if f.startswith("rst_comb_df") if f.endswith(".pkl")]
 targ_pkl_num_v   = [int(os.path.basename(f).split(".")[0].split("_")[-1]) for f in targ_pkl_flist_v]
 
 #
@@ -65,29 +75,53 @@ for accid in xrange(NACC):
     shell("touch %s" % os.path.join(work_dir,"jobidlist.txt"))    
     
     # slice input files
-    start = int(accid*len(targ_pkl_flist_v) / float(NACC))
-    end   = int((accid+1)*len(targ_pkl_flist_v) / float(NACC))
+    start = int(accid*len(targ_lc_flist_v) / float(NACC))
+    end   = int((accid+1)*len(targ_lc_flist_v) / float(NACC))
 
-    targ_pkl_flist_slice_tmp = targ_pkl_flist_v[start:end]
-    targ_pkl_num_slice_tmp   = targ_pkl_num_v[start:end]
+    targ_lc_flist_slice_tmp = targ_lc_flist_v[start:end]
+    targ_lc_num_slice_tmp   = targ_lc_num_v[start:end]
+
+    targ_lc_flist_slice = []
+    targ_lc_num_slice   = []
 
     targ_pkl_flist_slice = []
     targ_pkl_num_slice   = []
 
-    for targ_num,targ_flist in zip(targ_pkl_num_slice_tmp,
-                                   targ_pkl_flist_slice_tmp):
+    for targ_num,targ_flist in zip(targ_lc_num_slice_tmp,
+                                   targ_lc_flist_slice_tmp):
+        idx = int(-1)
+        try:
+            idx = targ_pkl_num_v.index(targ_num)
+        except ValueError:
+            print "@targ_num=%d does not exists @pkl folder" % targ_num
+            continue
+            
+        assert idx>=0
 
-        targ_pkl_flist_slice.append(targ_flist)
-        targ_pkl_num_slice.append(targ_num)
+        targ_lc_flist_slice.append(targ_flist)
+        targ_lc_num_slice.append(targ_num)
 
+
+        targ_pkl_flist_slice.append(targ_pkl_flist_v[idx])
+        targ_pkl_num_slice.append(targ_pkl_num_v[idx])
+        
 
     num_slice = len(targ_pkl_num_slice)
 
-    for x in zip(targ_pkl_num_slice,targ_pkl_flist_slice):
+    for x in zip(targ_lc_num_slice,targ_lc_flist_slice,
+                 targ_pkl_num_slice,targ_pkl_flist_slice):
 
-        targ_pkl_num   = x[0]
-        targ_pkl_flist = x[1]
+        targ_lc_num   = x[0]
+        targ_lc_flist = x[1]
 
+        targ_pkl_num   = x[2]
+        targ_pkl_flist = x[3]
+
+        f = open(os.path.join(inputlists_dir,"vertex_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
+        tidx = targ_lc_num_v.index(targ_lc_num)
+        f.write(targ_lc_flist_v[tidx])
+        f.close()
+        del f
 
         f = open(os.path.join(inputlists_dir,"pkl_inputlist_%04d.txt" % int(targ_pkl_num)),"w+")
         tidx = targ_pkl_num_v.index(targ_pkl_num)

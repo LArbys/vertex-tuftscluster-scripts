@@ -48,11 +48,13 @@ echo "JOBID ${jobid}"
 #
 # make path to input lists
 #
+vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%04d.txt ${jobid}`
 pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%04d.txt ${jobid}`
 
 #
 # get input files
 #
+input_vertex_file=`sed -n 1p ${vertex_inputlist}`
 input_pkl_file=`sed -n 1p ${pkl_inputlist}`
 
 slurm_folder=`printf slurm_ll_job%04d ${jobid}`
@@ -76,6 +78,7 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
+filter_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/pgraph_filter/
 
 #
 # RUN LL 
@@ -109,6 +112,24 @@ echo " "
 echo "run final file..." >> $logfile
 echo "python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl AAA ." >> $logfile
 python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl AAA . >> $logfile 2>&1 || exit
+echo "...final file complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# RUN filter
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run pgraph filter..." >> $logfile
+echo "python ${filter_dir}/filter.py ${input_vertex_file} nue_analysis_${jobid}.root ." >> $logfile
+python ${filter_dir}/filter.py ${input_vertex_file} nue_analysis_${jobid}.root . >> $logfile 2>&1 || exit
 echo "...final file complete" >> $logfile
 
 echo " "
