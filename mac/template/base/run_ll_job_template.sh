@@ -48,14 +48,18 @@ echo "JOBID ${jobid}"
 #
 # make path to input lists
 #
-vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%04d.txt ${jobid}`
-pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%04d.txt ${jobid}`
+vertex_out_inputlist=`printf ${inputlist_dir}/vertex_out_inputlist_%04d.txt ${jobid}`
+vertex_ana_inputlist=`printf ${inputlist_dir}/vertex_ana_inputlist_%04d.txt ${jobid}`
+tracker_ana_inputlist=`printf ${inputlist_dir}/tracker_ana_inputlist_%04d.txt ${jobid}`
+rst_pkl_inputlist=`printf ${inputlist_dir}/rst_pkl_inputlist_%04d.txt ${jobid}`
 
 #
 # get input files
 #
-input_vertex_file=`sed -n 1p ${vertex_inputlist}`
-input_pkl_file=`sed -n 1p ${pkl_inputlist}`
+input_vertex_out_file=`sed -n 1p ${vertex_out_inputlist}`
+input_vertex_ana_file=`sed -n 1p ${vertex_ana_inputlist}`
+input_tracker_ana_file=`sed -n 1p ${tracker_ana_inputlist}`
+input_rst_pkl_file=`sed -n 1p ${rst_pkl_inputlist}`
 
 slurm_folder=`printf slurm_ll_job%04d ${jobid}`
 mkdir -p ${slurm_folder}
@@ -77,11 +81,12 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 #
 
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
+numu_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/numu/
 final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 filter_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/pgraph_filter/
 
 #
-# RUN LL 
+# RUN Nue LL 
 #
 echo " "
 echo " "
@@ -91,15 +96,43 @@ echo " "
 pdf_file=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/bin/nue_pdfs.root
 line_file=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/bin/nue_line_file.root
 
-echo "run LL..." >> $logfile
-echo "python ${nue_ll_dir}/run_likelihood.py ${input_pkl_file} ${pdf_file} ${line_file} AAA ." >> $logfile
-python ${nue_ll_dir}/run_likelihood.py ${input_pkl_file} ${pdf_file} ${line_file} AAA . >> $logfile 2>&1 || exit
-echo "... LL complete" >> $logfile
+echo "run nue LL..." >> $logfile
+echo "python ${nue_ll_dir}/run_likelihood.py ${input_rst_pkl_file} ${pdf_file} ${line_file} AAA ." >> $logfile
+python ${nue_ll_dir}/run_likelihood.py ${input_rst_pkl_file} ${pdf_file} ${line_file} AAA . >> $logfile 2>&1 || exit
+echo "... nue LL complete" >> $logfile
 
 echo " "
 echo " "
 echo " "
 echo " "
+
+#
+# RUN NuMu LL 
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+numu_pkl1=${numu_ll_dir}/3DLLPdfs.pickle
+numu_pkl2=${numu_ll_dir}/3DLLPdfs_nufilt.pickle
+
+echo "run numu LL..." >> $logfile
+echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ." >> $logfile
+python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} . >> $logfile 2>&1 || exit
+echo "... numu LL complete" >> $logfile
+
+echo "combining numuLL..." >> $logfile
+echo "python ${nue_ll_dir}/add_to_rst.py ${input_rst_pkl_file} FinalVertexVariables_${jobid}.root ." >> $logfile
+python ${nue_ll_dir}/add_to_rst.py ${input_rst_pkl_file} FinalVertexVariables_${jobid}.root . >> $logfile 2>&1 || exit
+echo "...combining numuLL complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+
 
 #
 # RUN final file
@@ -110,8 +143,8 @@ echo " "
 echo " "
 
 echo "run final file..." >> $logfile
-echo "python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl AAA ." >> $logfile
-python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl AAA . >> $logfile 2>&1 || exit
+echo "python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl rt_LL_comb_df_${jobid} ${input_vertex_out_file} AAA . ">> $logfile
+python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl rst_numu_comb_df_${jobid}.pkl ${input_vertex_out_file} AAA . >> $logfile 2>&1 || exit
 echo "...final file complete" >> $logfile
 
 echo " "
@@ -128,8 +161,15 @@ echo " "
 echo " "
 
 echo "run pgraph filter..." >> $logfile
-echo "python ${filter_dir}/filter.py ${input_vertex_file} nue_analysis_${jobid}.root ." >> $logfile
-python ${filter_dir}/filter.py ${input_vertex_file} nue_analysis_${jobid}.root . >> $logfile 2>&1 || exit
+
+echo "... nue ..."
+echo "python ${filter_dir}/filter.py ${input_vertex_out_file} dllee_analysis_${jobid}.root nue_ana_tree ." >> $logfile
+python ${filter_dir}/filter.py ${input_vertex_out_file} dllee_analysis_${jobid}.root nue_ana_tree . >> $logfile 2>&1 || exit
+
+echo "... numu ..."
+echo "python ${filter_dir}/filter.py ${input_vertex_out_file} dllee_analysis_${jobid}.root numu_ana_tree ." >> $logfile
+python ${filter_dir}/filter.py ${input_vertex_out_file} dllee_analysis_${jobid}.root numu_ana_tree . >> $logfile 2>&1 || exit
+
 echo "...final file complete" >> $logfile
 
 echo " "
