@@ -82,6 +82,7 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 numu_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/numu/
+intermediate_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/intermediate_file/
 final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 filter_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/pgraph_filter/
 
@@ -126,6 +127,24 @@ echo "combining numuLL..." >> $logfile
 echo "python ${nue_ll_dir}/add_to_rst.py ${input_rst_pkl_file} FinalVertexVariables_${jobid}.root ." >> $logfile
 python ${nue_ll_dir}/add_to_rst.py ${input_rst_pkl_file} FinalVertexVariables_${jobid}.root . >> $logfile 2>&1 || exit
 echo "...combining numuLL complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# RUN intermediate file
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run intermediate file..." >> $logfile
+echo "python ${intermediate_file_dir}/intermediate_file.py rst_LL_comb_df_${jobid}.pkl AAA ." >> $logfile
+python ${intermediate_file_dir}/intermediate_file.py rst_LL_comb_df_${jobid}.pkl AAA . >> $logfile 2>&1 || exit
+echo "...intermediate file complete" >> $logfile
 
 echo " "
 echo " "
