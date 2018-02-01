@@ -41,6 +41,7 @@ os.system(SS)
 
 print
 dir_v = [os.path.join(FOLDER_BASE_DIR,f) for f in os.listdir(FOLDER_BASE_DIR) if f.startswith(FOLDER + "_p")]
+print dir_v
 for dd in dir_v:
     print "@dir=",os.path.basename(dd)
     SS = "ln -s %s %s" % (os.path.join(str(dd),"out","*"),os.path.join(FOLDER_BASE_DIR,"links"))

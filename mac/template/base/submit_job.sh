@@ -4,7 +4,7 @@
 #SBATCH --output=AAA/mac/log/ZZZ_log_CCC.txt
 #
 #SBATCH --ntasks=YYY
-#SBATCH --time=4:00:00
+#SBATCH --time=00:30:00
 #SBATCH --mem-per-cpu=2000
 
 CONTAINER=AAA/image/BBB

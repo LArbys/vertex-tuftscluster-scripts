@@ -14,7 +14,7 @@ def shell(SS):
 TEMPLATE_DIR      = os.path.join(MAC_DIR,"template")
 TEMPLATE_BASE_DIR = os.path.join(TEMPLATE_DIR,"base")
 
-for type_ in ['reco','st','ll']:
+for type_ in ['reco','stp','ll']:
     
     print "@type=",type_
     data = ""

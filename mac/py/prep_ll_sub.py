@@ -117,13 +117,27 @@ for accid in xrange(NACC):
         targ_pkl_num   = x[2]
         targ_pkl_flist = x[3]
 
-        f = open(os.path.join(inputlists_dir,"vertex_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
+        f = open(os.path.join(inputlists_dir,"vertex_out_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
         tidx = targ_lc_num_v.index(targ_lc_num)
         f.write(targ_lc_flist_v[tidx])
         f.close()
         del f
 
-        f = open(os.path.join(inputlists_dir,"pkl_inputlist_%04d.txt" % int(targ_pkl_num)),"w+")
+        f = open(os.path.join(inputlists_dir,"vertex_ana_inputlist_%04d.txt" % int(targ_lc_num)),"w+")
+        tidx = targ_lc_num_v.index(targ_lc_num)
+        f.write(targ_lc_flist_v[tidx].replace("out","ana"))
+        f.close()
+        del f
+
+        f = open(os.path.join(inputlists_dir,"tracker_ana_inputlist_%04d.txt" % int(targ_pkl_num)),"w+")
+        tidx = targ_pkl_num_v.index(targ_pkl_num)
+        temp=targ_pkl_flist_v[tidx].replace("rst_comb_df","tracker_anaout")
+        temp=temp.replace("pkl","root")
+        f.write(temp)
+        f.close()
+        del f
+
+        f = open(os.path.join(inputlists_dir,"rst_pkl_inputlist_%04d.txt" % int(targ_pkl_num)),"w+")
         tidx = targ_pkl_num_v.index(targ_pkl_num)
         f.write(targ_pkl_flist_v[tidx])
         f.close()
