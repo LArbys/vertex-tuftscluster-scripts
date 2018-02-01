@@ -117,7 +117,6 @@ echo " "
 
 #numu_pkl1=${numu_ll_dir}/3DLLPdfs.pickle
 #numu_pkl2=${numu_ll_dir}/3DLLPdfs_nufilt.pickle
-
 numu_pkl1=${numu_ll_dir}/3DLLPdfs_1mu1p_vs_cosmic_HIGHSTAT.pickle
 numu_pkl2=${numu_ll_dir}/3DLLPdfs_1mu1p_vs_nubkg_HIGHSTAT.pickle
 
