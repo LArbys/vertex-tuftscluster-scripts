@@ -192,7 +192,10 @@ for accid in xrange(NACC):
         f = open(os.path.join(inputlists_dir,"ll_inputlist_%05d.txt" % int(targ_lc_num)),"w+")
         f.write(targ_ll_reco_flist)
         f.write(" ")
-        f.write(targ_ll_mcinfo_flist)
+        if IS_MC == 1:
+            f.write(targ_ll_mcinfo_flist)
+        else:
+            f.write("INVALID")
         f.close()
         del f
         

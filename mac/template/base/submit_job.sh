@@ -16,4 +16,4 @@ OUTPUTDIR=XXX/out
 
 mkdir -p ${OUTPUTDIR}
 module load singularity
-srun singularity exec ${CONTAINER} bash -c "cd ${WORKDIR} && source run_ZZZ_job.sh ${WORKDIR} ${INPUTLISTDIR} ${OUTPUTDIR} ${JOBIDLIST}"
+srun -p interactive singularity exec ${CONTAINER} bash -c "cd ${WORKDIR} && source run_ZZZ_job.sh ${WORKDIR} ${INPUTLISTDIR} ${OUTPUTDIR} ${JOBIDLIST}"
