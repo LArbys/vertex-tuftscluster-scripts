@@ -4,7 +4,7 @@
 #SBATCH --output=BBB
 #
 #SBATCH --ntasks=CCC
-#SBATCH --time=4:00:00
+#SBATCH --time=00:45:00
 #SBATCH --mem-per-cpu=2000
 
 CONTAINER=DDD
@@ -16,4 +16,4 @@ OUTPUTDIR=FFF
 
 mkdir -p ${OUTPUTDIR}
 module load singularity
-srun singularity exec ${CONTAINER} bash -c "cd ${WORKDIR} && source GGG ${WORKDIR} ${INPUTLISTDIR} ${OUTPUTDIR} ${JOBIDLIST}"
+srun singularity exec ${CONTAINER} bash -c "cd ${WORKDIR} && printenv | grep SLURM_JOBID > job.id && source GGG ${WORKDIR} ${INPUTLISTDIR} ${OUTPUTDIR} ${JOBIDLIST} 1>/dev/null 2>/dev/null"
