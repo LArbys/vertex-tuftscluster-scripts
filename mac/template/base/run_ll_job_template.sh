@@ -120,10 +120,11 @@ echo " "
 
 numu_pkl1=${numu_ll_dir}/3DLLPdfs_1mu1p_vs_cosmic_HIGHSTAT.pickle
 numu_pkl2=${numu_ll_dir}/3DLLPdfs_1mu1p_vs_nubkg_HIGHSTAT.pickle
+numu_pkl3=${numu_ll_dir}/3DLLPdfs_CCpi0_vs_cosmic_HIGHSTAT.pickle
 
 echo "run numu LL..." >> $logfile
 echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ." >> $logfile
-python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} . >> $logfile 2>&1 || exit
+python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ${numu_pkl3} . >> $logfile 2>&1 || exit
 echo "... numu LL complete" >> $logfile
 
 echo "combining numuLL..." >> $logfile
