@@ -48,10 +48,12 @@ echo "JOBID ${jobid}"
 #
 # make path to input lists
 #
-vertex_out_inputlist=`printf ${inputlist_dir}/vertex_out_inputlist_%04d.txt ${jobid}`
-vertex_ana_inputlist=`printf ${inputlist_dir}/vertex_ana_inputlist_%04d.txt ${jobid}`
-tracker_ana_inputlist=`printf ${inputlist_dir}/tracker_ana_inputlist_%04d.txt ${jobid}`
-rst_pkl_inputlist=`printf ${inputlist_dir}/rst_pkl_inputlist_%04d.txt ${jobid}`
+vertex_out_inputlist=`printf ${inputlist_dir}/vertex_out_inputlist_%05d.txt ${jobid}`
+vertex_ana_inputlist=`printf ${inputlist_dir}/vertex_ana_inputlist_%05d.txt ${jobid}`
+tracker_ana_inputlist=`printf ${inputlist_dir}/tracker_ana_inputlist_%05d.txt ${jobid}`
+shower_ana_inputlist=`printf ${inputlist_dir}/shower_ana_inputlist_%05d.txt ${jobid}`
+rst_pkl_inputlist=`printf ${inputlist_dir}/rst_pkl_inputlist_%05d.txt ${jobid}`
+all_ana_inputlist=`printf ${inputlist_dir}/all_ana_inputlist_%05d.txt ${jobid}`
 
 #
 # get input files
@@ -59,16 +61,18 @@ rst_pkl_inputlist=`printf ${inputlist_dir}/rst_pkl_inputlist_%04d.txt ${jobid}`
 input_vertex_out_file=`sed -n 1p ${vertex_out_inputlist}`
 input_vertex_ana_file=`sed -n 1p ${vertex_ana_inputlist}`
 input_tracker_ana_file=`sed -n 1p ${tracker_ana_inputlist}`
+input_shower_ana_file=`sed -n 1p ${shower_ana_inputlist}`
 input_rst_pkl_file=`sed -n 1p ${rst_pkl_inputlist}`
+input_all_ana_file=`sed -n 1p ${all_ana_inputlist}`
 
-slurm_folder=`printf slurm_ll_job%04d ${jobid}`
+slurm_folder=`printf slurm_ll_job%05d ${jobid}`
 mkdir -p ${slurm_folder}
 cd ${slurm_folder}
 
 #
 # make log file
 #
-logfile=`printf log_ll_%04d.txt ${jobid}`
+logfile=`printf log_ll_%05d.txt ${jobid}`
 touch ${logfile}
 
 #
@@ -155,7 +159,41 @@ echo " "
 echo " "
 echo " "
 
+#
+# RUN all vertex file
+#
+echo " "
+echo " "
+echo " "
+echo " "
 
+echo "run all vertex file..." >> $logfile
+echo "python ${intermediate_file_dir}/hadd_vertices.py . ${input_all_ana_file}" >> $logfile
+python ${intermediate_file_dir}/hadd_vertices.py . ${input_all_ana_file} >> $logfile 2>&1 || exit
+echo "...all vertex file complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# RUN precut file
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run precut file..." >> $logfile
+echo "python ${nue_ll_dir}/precuts.py rst_LL_comb_df_${jobid}.pkl BBB CCC DDD EEE nue_precut . AAA" >> $logfile
+python ${nue_ll_dir}/precuts.py rst_LL_comb_df_${jobid}.pkl BBB CCC DDD EEE nue_precut . AAA >> $logfile 2>&1 || exit
+echo "...precut file complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
 
 #
 # RUN final file
@@ -166,8 +204,8 @@ echo " "
 echo " "
 
 echo "run final file..." >> $logfile
-echo "python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl rt_LL_comb_df_${jobid} ${input_vertex_out_file} AAA . ">> $logfile
-python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl rst_numu_comb_df_${jobid}.pkl ${input_vertex_out_file} AAA . >> $logfile 2>&1 || exit
+echo "python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl nue_precut_${jobid}.pkl rst_numu_comb_df_${jobid}.pkl  ${input_shower_ana_file} ${input_vertex_out_file} AAA FFF . ">> $logfile
+python ${final_file_dir}/make_ttree.py rst_LL_comb_df_${jobid}.pkl nue_precut_${jobid}.pkl rst_numu_comb_df_${jobid}.pkl ${input_shower_ana_file} ${input_vertex_out_file} AAA FFF . >> $logfile 2>&1 || exit
 echo "...final file complete" >> $logfile
 
 echo " "
