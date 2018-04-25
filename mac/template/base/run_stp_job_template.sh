@@ -169,8 +169,19 @@ echo " "
 echo " "
 echo " "
 echo " "
-echo "python ${pid_dir}/inference.py ${input_reco_file} ." >> $logfile
-python ${pid_dir}/inference.py ${input_reco_file} . >> $logfile 2>&1 || exit
+echo "python ${pid_dir}/inference.py ${input_ssnet_file} ${input_reco_file} ." >> $logfile
+python ${pid_dir}/inference.py ${input_ssnet_file} ${input_reco_file} . >> $logfile 2>&1 || exit
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo " "
+echo " "
+echo " "
+echo " "
+echo "python ${pid_dir}/inference_perceptron.py multipid_out_${jobid}.root ." >> $logfile
+python ${pid_dir}/inference_perceptron.py multipid_out_${jobid}.root . >> $logfile 2>&1 || exit
 echo " "
 echo " "
 echo " "
@@ -183,8 +194,8 @@ echo " "
 echo " "
 echo " "
 echo " "
-echo "python ${nue_ll_dir}/combine_stp.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root trackqualsingle_${jobid}.root tracker_anaout_${jobid}.root track_truth_match_${jobid}.root track_pgraph_match_${jobid}.root multipid_out_${jobid}.root ." >> $logfile
-python ${nue_ll_dir}/combine_stp.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root trackqualsingle_${jobid}.root tracker_anaout_${jobid}.root track_truth_match_${jobid}.root track_pgraph_match_${jobid}.root multipid_out_${jobid}.root . >> $logfile 2>&1 || exit
+echo "python ${nue_ll_dir}/combine_stp.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root trackqualsingle_${jobid}.root tracker_anaout_${jobid}.root track_truth_match_${jobid}.root track_pgraph_match_${jobid}.root multipid_out_${jobid}.root perceptron_out_${jobid}.root ." >> $logfile
+python ${nue_ll_dir}/combine_stp.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root trackqualsingle_${jobid}.root tracker_anaout_${jobid}.root track_truth_match_${jobid}.root track_pgraph_match_${jobid}.root multipid_out_${jobid}.root perceptron_out_${jobid}.root . >> $logfile 2>&1 || exit
 echo " "
 echo " "
 echo " "

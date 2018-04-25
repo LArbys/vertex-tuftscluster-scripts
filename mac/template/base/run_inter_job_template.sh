@@ -95,8 +95,8 @@ echo " "
 echo " "
 
 echo "run inter tool script..." >> $logfile
-echo "python ${inter_dir}/AAA ${input_ssnet_file} ${input_vertex_file} ${input_opreco_file} ${input_shower_file} ${input_tracker_file} ${input_inter_file} ." >> $logfile
-python ${inter_dir}/AAA ${input_ssnet_file} ${input_vertex_file} ${input_opreco_file} ${input_shower_file} ${input_tracker_file} ${input_inter_file} . >> $logfile 2>&1 || exit
+echo "python ${inter_dir}/AAA ${input_ssnet_file} ${input_vertex_file} ${input_opreco_file} ${input_shower_file} ${input_tracker_file} ${input_inter_file} BBB ." >> $logfile
+python ${inter_dir}/AAA ${input_ssnet_file} ${input_vertex_file} ${input_opreco_file} ${input_shower_file} ${input_tracker_file} ${input_inter_file} BBB . >> $logfile 2>&1 || exit
 echo "... inter tool script run" >> $logfile
 
 echo " "
