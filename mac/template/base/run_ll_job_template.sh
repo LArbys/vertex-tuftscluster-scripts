@@ -91,6 +91,13 @@ final_file_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 filter_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/pgraph_filter/
 
 #
+# Permissions
+#
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+
+#
 # RUN Nue LL 
 #
 echo " "
@@ -244,4 +251,9 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+rm -rf *.root
+rm -rf *.pkl
 echo "...copied" >> $logfile

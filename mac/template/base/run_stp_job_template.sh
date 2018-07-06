@@ -102,6 +102,13 @@ shower_ana_cfg_file=${jobdir}/RRR
 cat $shower_ana_cfg_file >> $logfile
 
 #
+# Permissions
+#
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+
+#
 # RUN shower reco
 #
 echo " "
@@ -110,8 +117,8 @@ echo " "
 echo " "
 
 echo "run shower..." >> $logfile
-echo "python ${shower_dir}/reco_recluster_shower.py ${input_reco_file} ${input_ll_files} . 0 AAA BBB" >> $logfile
-python ${shower_dir}/reco_recluster_shower.py ${input_reco_file} ${input_ll_files} . 0 AAA BBB >> $logfile 2>&1 || exit
+echo "python ${shower_dir}/reco_recluster_shower.py ${input_reco_file} ${input_ll_files} . 0 AAA BBB config.cfg" >> $logfile
+python ${shower_dir}/reco_recluster_shower.py ${input_reco_file} ${input_ll_files} . 0 AAA BBB config.cfg >> $logfile 2>&1 || exit
 echo "...shower complete" >> $logfile
 
 echo "analyze shower..." >> $logfile
@@ -138,8 +145,8 @@ echo " "
 echo " "
 
 echo "run track..." >> $logfile
-echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_reco_file} ." >> $logfile
-python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_reco_file} . >> $logfile 2>&1 || exit
+echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} nueid_lcv_out_${jobid}.root ." >> $logfile
+python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} nueid_lcv_out_${jobid}.root . >> $logfile 2>&1 || exit
 echo "...track complete" >> $logfile
 
 echo "analyze track..." >> $logfile
@@ -148,8 +155,8 @@ python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input
 echo "... analyze complete" >> $logfile
 
 echo "reco match track..." >> $logfile
-echo "python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} ${input_reco_file} tracker_reco_${jobid}.root" >> $logfile
-python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} ${input_reco_file} tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
+echo "python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} nueid_lcv_out_${jobid}.root tracker_reco_${jobid}.root" >> $logfile
+python ${match_dir}/ana_reco_match.py ${tracker_ana_cfg_file} ${input_ssnet_file} nueid_lcv_out_${jobid}.root tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
 echo "...reco match complete" >> $logfile
 
 echo "truth match track..." >> $logfile
@@ -222,4 +229,9 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+rm -rf *.root
+rm -rf *.pkl
 echo "...copied" >> $logfile

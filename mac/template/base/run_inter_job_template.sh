@@ -87,6 +87,13 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 inter_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/InterTool/Sel/
 
 #
+# Permissions
+#
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+
+#
 # RUN InterTool script
 #
 echo " "
@@ -111,4 +118,9 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+rm -rf *.root
+rm -rf *.pkl
 echo "...copied" >> $logfile

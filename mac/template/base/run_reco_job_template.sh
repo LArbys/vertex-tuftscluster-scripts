@@ -78,6 +78,13 @@ cat $cfg_file >> $logfile
 vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 
+#
+# Permissions
+#
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+
 # RECO
 echo " "
 echo " "
@@ -108,6 +115,12 @@ echo " "
 
 
 # COPY DATA
+echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-
+chmod -R g+rwx ${output_dir}
+chmod -R g+rwx `pwd -P`
+chmod -R g+rwx `pwd -P`/../
+rm -rf *.root
+rm -rf *.pkl
+echo "...copied" >> $logfile
