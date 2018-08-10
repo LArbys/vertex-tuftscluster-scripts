@@ -89,9 +89,9 @@ inter_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/InterTool/Sel/
 #
 # Permissions
 #
-chmod -R g+rwx ${output_dir}
-chmod -R g+rwx `pwd -P`
-chmod -R g+rwx `pwd -P`/../
+chmod -R a+rwx ${output_dir}
+chmod -R a+rwx `pwd -P`
+chmod -R a+rwx `pwd -P`/../
 
 #
 # RUN InterTool script
@@ -118,9 +118,10 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-chmod -R g+rwx ${output_dir}
-chmod -R g+rwx `pwd -P`
-chmod -R g+rwx `pwd -P`/../
+chmod -R a+rwx ${output_dir}
+chmod -R a+rwx `pwd -P`
+chmod -R a+rwx `pwd -P`/../
 rm -rf *.root
 rm -rf *.pkl
+rm -rf .pylardcache
 echo "...copied" >> $logfile

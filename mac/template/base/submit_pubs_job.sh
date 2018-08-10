@@ -4,7 +4,7 @@
 #SBATCH --output=BBB
 #
 #SBATCH --ntasks=CCC
-#SBATCH --time=01:00:00
+#SBATCH --time=02:00:00
 #SBATCH --mem-per-cpu=2000
 
 CONTAINER=DDD

@@ -81,9 +81,9 @@ nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 #
 # Permissions
 #
-chmod -R g+rwx ${output_dir}
-chmod -R g+rwx `pwd -P`
-chmod -R g+rwx `pwd -P`/../
+chmod -R a+rwx ${output_dir}
+chmod -R a+rwx `pwd -P`/*
+chmod -R a+rwx `pwd -P`/../*
 
 # RECO
 echo " "
@@ -118,9 +118,11 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-chmod -R g+rwx ${output_dir}
-chmod -R g+rwx `pwd -P`
-chmod -R g+rwx `pwd -P`/../
+chmod -R a+rwx ${output_dir}
+chmod -R a+rwx `pwd -P`/
+chmod -R a+rwx `pwd -P`/.pylardcache
+chmod -R a+rwx `pwd -P`/../
 rm -rf *.root
 rm -rf *.pkl
+rm -rf .pylardcache
 echo "...copied" >> $logfile
