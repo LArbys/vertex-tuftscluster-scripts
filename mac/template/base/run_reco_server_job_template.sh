@@ -45,10 +45,14 @@ let jobid=`sed -n ${proc_line}p ${jobid_list}`
 echo "JOBID ${jobid}"
 
 # make path to input list
-inputlist=`printf ${inputlist_dir}/inputlist_%05d.txt ${jobid}`
+supera_inputlist=`printf ${inputlist_dir}/supera_inputlist_%05d.txt ${jobid}`
+ssnet_inputlist=`printf ${inputlist_dir}/ssnet_inputlist_%05d.txt ${jobid}`
+tagger_inputlist=`printf ${inputlist_dir}/tagger_inputlist_%05d.txt ${jobid}`
 
 # get input files
-input_ssnet_file=`sed -n 1p ${inputlist}`
+input_supera_file=`sed -n 1p ${supera_inputlist}`
+input_ssnet_file=`sed -n 1p ${ssnet_inputlist}`
+input_tagger_file=`sed -n 1p ${tagger_inputlist}`
 
 slurm_folder=`printf slurm_vertex_job%05d ${jobid}`
 
@@ -76,14 +80,15 @@ cfg_file=${jobdir}/XXX
 cat $cfg_file >> $logfile
 
 vtx_reco_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/cfg/mac/
-stage2_ana_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
+stage2_ana_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/stage2/
 
 #
 # Permissions
 #
 chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`/*
-chmod -R a+rwx `pwd -P`/../*
+chmod -R a+rwx `pwd -P`/
+chmod -R a+rwx `pwd -P`/../
+
 
 # RECO
 echo " "
@@ -91,8 +96,8 @@ echo " "
 echo " "
 echo " "
 echo "reco..." >> $logfile
-echo "python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . " >> $logfile
-python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . >> $logfile 2>&1 || exit
+echo "python ${vtx_reco_dir}/run_reco_server.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} . " >> $logfile
+python ${vtx_reco_dir}/run_reco_server.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} . >> $logfile 2>&1 || exit
 echo "..recoed" >> $logfile
 echo " "
 echo " "
