@@ -97,7 +97,9 @@ echo " "
 echo " "
 echo "reco..." >> $logfile
 echo "python ${vtx_reco_dir}/run_reco_server.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} . " >> $logfile
-python ${vtx_reco_dir}/run_reco_server.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} . >> $logfile 2>&1 || exit
+python ${vtx_reco_dir}/run_reco_server.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "..recoed" >> $logfile
 echo " "
 echo " "
@@ -111,7 +113,9 @@ echo " "
 echo " "
 echo "pickle..." >> $logfile
 echo "python ${stage2_ana_dir}/make_vertex_pickle.py ${outfile_ana_temp} . " >> $logfile
-python ${stage2_ana_dir}/make_vertex_pickle.py ${outfile_ana_temp} . >> $logfile 2>&1 || exit
+python ${stage2_ana_dir}/make_vertex_pickle.py ${outfile_ana_temp} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "..pickled" >> $logfile
 echo " "
 echo " "

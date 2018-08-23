@@ -111,17 +111,23 @@ echo " "
 
 echo "run track..." >> $logfile
 echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_vertex_file} ." >> $logfile
-python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_vertex_file} . >> $logfile 2>&1 || exit
+python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_vertex_file} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "...track complete" >> $logfile
 
 echo "analyze track..." >> $logfile
-echo "python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1 || exit"
-python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1 || exit
+echo "python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1"
+python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... analyze complete" >> $logfile
 
 echo "truth match track..." >> $logfile
 echo "python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root ." >> $logfile
-python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root . >> $logfile 2>&1 || exit
+python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "...truth match complete" >> $logfile
 
 echo " "
@@ -129,23 +135,6 @@ echo " "
 echo " "
 echo " "
 
-# #
-# # RUN track dir InterTool script
-# #
-# echo " "
-# echo " "
-# echo " "
-# echo " "
-
-# echo "run trackdir inter tool script..." >> $logfile
-# echo "python ${trackdir_inter_dir}/inter_ana_dir.py ${input_ssnet_file} ${input_vertex_file} \"\" \"\" tracker_reco_${jobid}.root \"\" BBB . ${input_reco2d_file}" >> $logfile
-# python ${trackdir_inter_dir}/inter_ana_dir.py ${input_ssnet_file} ${input_vertex_file} "" "" tracker_reco_${jobid}.root "" BBB . ${input_reco2d_file} >> $logfile 2>&1 || exit
-# echo "... inter trackdir inter tool script run" >> $logfile
-
-# echo " "
-# echo " "
-# echo " "
-# echo " "
 
 #
 # Copy to output

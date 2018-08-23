@@ -112,7 +112,9 @@ numu_pkl3=${numu_ll_dir}/3DLLPdfs_CCpi0_vs_cosmic_HIGHSTAT.pickle
 
 echo "run numu LL..." >> $logfile
 echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ${numu_pkl3} ." >> $logfile
-python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ${numu_pkl3} . >> $logfile 2>&1 || exit
+python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ${numu_pkl3} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... numu LL complete" >> $logfile
 
 echo " "
@@ -130,7 +132,9 @@ echo " "
 
 echo "run mcinfo dump..." >> $logfile
 echo "python ${mcdump_dir}/run_MCDump.py ${input_mcinfo_file} ${jobid} ." >> $logfile
-python ${mcdump_dir}/run_MCDump.py ${input_mcinfo_file} ${jobid} . >> $logfile 2>&1 || exit
+python ${mcdump_dir}/run_MCDump.py ${input_mcinfo_file} ${jobid} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... mcinfo dump complete" >> $logfile
 
 echo " "
@@ -148,7 +152,9 @@ echo " "
 
 echo "run tagger dump..." >> $logfile
 echo "python ${mcdump_dir}/run_TaggerDump.py ${input_tagger_ll_file} ${jobid} ." >> $logfile
-python ${mcdump_dir}/run_TaggerDump.py ${input_tagger_ll_file} ${jobid} . >> $logfile 2>&1 || exit
+python ${mcdump_dir}/run_TaggerDump.py ${input_tagger_ll_file} ${jobid} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... tagger dump complete" >> $logfile
 
 echo " "
@@ -166,7 +172,9 @@ echo " "
 
 echo "run pmt precut dump..." >> $logfile
 echo "python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} ." >> $logfile
-python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} . >> $logfile 2>&1 || exit
+python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... pmt precut dump complete" >> $logfile
 
 echo " "
@@ -185,7 +193,9 @@ echo " "
 
 echo "run tagger xing dump..." >> $logfile
 echo "python ${xing_dir}/run_cosmic.py ${xing_dir}/cosmic_ana.cfg ${input_tagger_lcv_file} ${jobid} ." >> $logfile
-python ${xing_dir}/run_cosmic.py ${xing_dir}/cosmic_ana.cfg ${input_tagger_lcv_file} ${jobid} . >> $logfile 2>&1 || exit
+python ${xing_dir}/run_cosmic.py ${xing_dir}/cosmic_ana.cfg ${input_tagger_lcv_file} ${jobid} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... tagger xing dump complete" >> $logfile
 
 echo " "
@@ -203,7 +213,9 @@ echo " "
 
 echo "run pot dump..." >> $logfile
 echo "python ${pot_dir}/pot_scrape_ll.py ${input_mcinfo_file} pot_scrape_${jobid} ." >> $logfile
-python ${pot_dir}/pot_scrape_ll.py ${input_mcinfo_file} pot_scrape_${jobid} . >> $logfile 2>&1 || exit
+python ${pot_dir}/pot_scrape_ll.py ${input_mcinfo_file} pot_scrape_${jobid} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... pot dump complete" >> $logfile
 
 echo " "
@@ -221,7 +233,9 @@ echo " "
 
 echo "run fluxrw dump..." >> $logfile
 echo "python ${flux_dir}/run_fluxRW.py ${input_mcinfo_file} ${jobid} ." >> $logfile
-python ${flux_dir}/run_fluxRW.py ${input_mcinfo_file} ${jobid} . >> $logfile 2>&1 || exit
+python ${flux_dir}/run_fluxRW.py ${input_mcinfo_file} ${jobid} . >> $logfile 2>&1
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... fluxrw dump complete" >> $logfile
 
 echo " "
@@ -241,6 +255,8 @@ echo "run hadd..." >> $logfile
 export LD_LIBRARY_PATH=/.singularity.d/libs:/usr/local/lib
 echo "hadd dllee_vertex_${jobid}.root FinalVertexVariables_${jobid}.root ${input_vertex_ana_file} ${input_tracker_ana_file} ${input_tracker_truth_file}"
 hadd dllee_vertex_${jobid}.root FinalVertexVariables_${jobid}.root ${input_vertex_ana_file} ${input_tracker_ana_file} ${input_tracker_truth_file}
+chmod -R a+rwx ${output_dir}
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... hadd complete" >> $logfile
 
 echo " "
