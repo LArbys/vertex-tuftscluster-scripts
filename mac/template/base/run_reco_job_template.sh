@@ -81,9 +81,9 @@ stage2_ana_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/stage2/
 #
 # Permissions
 #
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`/*
-chmod -R a+rwx `pwd -P`/../*
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`/*
+chmod -R 777 `pwd -P`/../*
 
 # RECO
 echo " "
@@ -94,7 +94,7 @@ echo "reco..." >> $logfile
 echo "python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . " >> $logfile
 python ${vtx_reco_dir}/run_reco.py ${cfg_file} ${outfile_ana_temp} ${outfile_out_temp} ${input_ssnet_file} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "..recoed" >> $logfile
 echo " "
@@ -111,7 +111,7 @@ echo "pickle..." >> $logfile
 echo "python ${stage2_ana_dir}/make_vertex_pickle.py ${outfile_ana_temp} . " >> $logfile
 python ${stage2_ana_dir}/make_vertex_pickle.py ${outfile_ana_temp} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "..pickled" >> $logfile
 echo " "
@@ -124,10 +124,10 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-chmod -R +t,a+rwx ${output_dir}
-chmod -R +t,a+rwx `pwd -P`/
-chmod -R +t,a+rwx `pwd -P`/.pylardcache
-chmod -R +t,a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`/
+chmod -R 777 `pwd -P`/.pylardcache
+chmod -R 777 `pwd -P`/../
 rm -rf *.root
 rm -rf *.pkl
 rm -rf .pylardcache

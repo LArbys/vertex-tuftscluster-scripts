@@ -55,6 +55,8 @@ tracker_ana_inputlist=`printf ${inputlist_dir}/tracker_ana_inputlist_%05d.txt ${
 tracker_truth_inputlist=`printf ${inputlist_dir}/tracker_truth_inputlist_%05d.txt ${jobid}`
 mcinfo_inputlist=`printf ${inputlist_dir}/mcinfo_inputlist_%05d.txt ${jobid}`
 opreco_inputlist=`printf ${inputlist_dir}/opreco_inputlist_%05d.txt ${jobid}`
+vertex_pkl_inputlist=`printf ${inputlist_dir}/vertex_pkl_inputlist_%05d.txt ${jobid}`
+nueid_pkl_inputlist=`printf ${inputlist_dir}/nueid_pkl_inputlist_%05d.txt ${jobid}`
 
 #
 # get input files
@@ -63,9 +65,10 @@ input_tagger_lcv_file=`sed -n 1p ${tagger_lcv_inputlist}`
 input_tagger_ll_file=`sed -n 1p ${tagger_ll_inputlist}`
 input_vertex_ana_file=`sed -n 1p ${vertex_ana_inputlist}`
 input_tracker_ana_file=`sed -n 1p ${tracker_ana_inputlist}`
-input_tracker_truth_file=`sed -n 1p ${tracker_truth_inputlist}`
 input_mcinfo_file=`sed -n 1p ${mcinfo_inputlist}`
 input_opreco_file=`sed -n 1p ${opreco_inputlist}`
+input_vertex_pkl_file=`sed -n 1p ${vertex_pkl_inputlist}`
+input_nueid_pkl_file=`sed -n 1p ${nueid_pkl_inputlist}`
 
 slurm_folder=`printf slurm_ll_job%05d ${jobid}`
 mkdir -p ${slurm_folder}
@@ -86,42 +89,72 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 # go to work directory
 #
 numu_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/numu/
+nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
 mcdump_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
 xing_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/cosmic_xing/
 pot_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/pot/
 flux_dir=${LARLITE_USERDEVDIR}/SelectionTool/FluxRW_test/mac/
+stage2_ana_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/stage2/
 
 #
 # Permissions
 #
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`
-chmod -R a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`
+chmod -R 777 `pwd -P`/../
 
 #
-# RUN NuMu LL 
+# RUN NuMu selection
 #
 echo " "
 echo " "
 echo " "
 echo " "
 
-numu_pkl1=${numu_ll_dir}/3DLLPdfs_1mu1p_vs_cosmic_HIGHSTAT.pickle
-numu_pkl2=${numu_ll_dir}/3DLLPdfs_1mu1p_vs_nubkg_HIGHSTAT.pickle
-numu_pkl3=${numu_ll_dir}/3DLLPdfs_CCpi0_vs_cosmic_HIGHSTAT.pickle
+# numu_pkl=${numu_ll_dir}/selection4PDFs.pickle
 
-echo "run numu LL..." >> $logfile
-echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ${numu_pkl3} ." >> $logfile
-python ${numu_ll_dir}/MakeNuMuSelectionFiles.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl1} ${numu_pkl2} ${numu_pkl3} . >> $logfile 2>&1
-rc=$?;
-chmod a+rwx *
+# echo "run numu LL..." >> $logfile
+# echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles_2.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl} ." >> $logfile
+# python ${numu_ll_dir}/MakeNuMuSelectionFiles_2.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl} . >> $logfile 2>&1
+# rc=$?;
+# chmod 777 *
+# if [[ $rc != 0 ]]; then exit $rc; fi
+# echo "... numu LL complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# RUN Nue selection
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run vertex & nueid combine..."
+echo "python ${stage2_ana_dir}/make_comb_pickle.py ${input_vertex_pkl_file} ${input_nueid_pkl_file} ${jobid} ." >> $logfile
+python ${stage2_ana_dir}/make_comb_pickle.py ${input_vertex_pkl_file} ${input_nueid_pkl_file} ${jobid} . >> $logfile 2>&1
+rc=$?
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
-echo "... numu LL complete" >> $logfile
+echo "... vertex & nueid combined"
+
+echo "run nue selection..." >> $logfile
+echo "python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${jobid} . " >> $logfile
+python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${jobid} . >> $logfile 2>&1
+rc=$?;
+chmod 777 *
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... nue selection complete" >> $logfile
 
 echo " "
 echo " "
 echo " "
 echo " "
+
 
 #
 # RUN mcinfo_dump
@@ -135,7 +168,7 @@ echo "run mcinfo dump..." >> $logfile
 echo "python ${mcdump_dir}/run_MCDump.py ${input_mcinfo_file} ${jobid} ." >> $logfile
 python ${mcdump_dir}/run_MCDump.py ${input_mcinfo_file} ${jobid} . >> $logfile 2>&1
 rc=$?;
-chmod -R a+rwx *
+chmod -R 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... mcinfo dump complete" >> $logfile
 
@@ -156,7 +189,7 @@ echo "run tagger dump..." >> $logfile
 echo "python ${mcdump_dir}/run_TaggerDump.py ${input_tagger_ll_file} ${jobid} ." >> $logfile
 python ${mcdump_dir}/run_TaggerDump.py ${input_tagger_ll_file} ${jobid} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... tagger dump complete" >> $logfile
 
@@ -177,7 +210,7 @@ echo "run pmt precut dump..." >> $logfile
 echo "python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} ." >> $logfile
 python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... pmt precut dump complete" >> $logfile
 
@@ -186,27 +219,6 @@ echo " "
 echo " "
 echo " "
 
-
-#
-# tagger xing dump
-#
-echo " "
-echo " "
-echo " "
-echo " "
-
-echo "run tagger xing dump..." >> $logfile
-echo "python ${xing_dir}/run_cosmic.py ${xing_dir}/cosmic_ana.cfg ${input_tagger_lcv_file} ${jobid} ." >> $logfile
-python ${xing_dir}/run_cosmic.py ${xing_dir}/cosmic_ana.cfg ${input_tagger_lcv_file} ${jobid} . >> $logfile 2>&1
-rc=$?;
-chmod a+rwx *
-if [[ $rc != 0 ]]; then exit $rc; fi
-echo "... tagger xing dump complete" >> $logfile
-
-echo " "
-echo " "
-echo " "
-echo " "
 
 #
 # POT dump
@@ -220,7 +232,7 @@ echo "run pot dump..." >> $logfile
 echo "python ${pot_dir}/pot_scrape_ll.py ${input_mcinfo_file} pot_scrape_${jobid} ." >> $logfile
 python ${pot_dir}/pot_scrape_ll.py ${input_mcinfo_file} pot_scrape_${jobid} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... pot dump complete" >> $logfile
 
@@ -241,7 +253,7 @@ echo "run fluxrw dump..." >> $logfile
 echo "python ${flux_dir}/run_fluxRW.py ${input_mcinfo_file} ${jobid} ." >> $logfile
 python ${flux_dir}/run_fluxRW.py ${input_mcinfo_file} ${jobid} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... fluxrw dump complete" >> $logfile
 
@@ -250,27 +262,6 @@ echo " "
 echo " "
 echo " "
 
-#
-# RUN hadd
-#
-echo " "
-echo " "
-echo " "
-echo " "
-
-echo "run hadd..." >> $logfile
-export LD_LIBRARY_PATH=/.singularity.d/libs:/usr/local/lib
-echo "hadd dllee_vertex_${jobid}.root FinalVertexVariables_${jobid}.root ${input_vertex_ana_file} ${input_tracker_ana_file} ${input_tracker_truth_file}"
-hadd dllee_vertex_${jobid}.root FinalVertexVariables_${jobid}.root ${input_vertex_ana_file} ${input_tracker_ana_file} ${input_tracker_truth_file}
-rc=$?;
-chmod a+rwx *
-if [[ $rc != 0 ]]; then exit $rc; fi
-echo "... hadd complete" >> $logfile
-
-echo " "
-echo " "
-echo " "
-echo " "
 
 #
 # Copy to output
@@ -278,10 +269,10 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`
-chmod -R a+rwx `pwd -P`/.pylardcache
-chmod -R a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`
+chmod -R 777 `pwd -P`/.pylardcache
+chmod -R 777 `pwd -P`/../
 rm -rf *.root
 rm -rf *.pkl
 rm -rf .pylardcache

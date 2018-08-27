@@ -83,15 +83,10 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 # go to work directory
 #
 shower_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
-
 match_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/RecoTruthMatch/mac/
-
 pid_dir=${LARCV_BASEDIR}/../toymodel/simple_inference/
-
 nueid_inter_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/InterTool/Sel/NueID/mac/
-
 flashmatch_inter_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/InterTool/Sel/FlashMatch/mac/
-
 stage2_ana_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/stage2/
 
 #
@@ -115,9 +110,9 @@ cat $flash_cfg_file >> $logfile
 #
 # Permissions
 #
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`/
-chmod -R a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`/
+chmod -R 777 `pwd -P`/../
 
 #
 # RUN nueid InterTool script
@@ -131,7 +126,7 @@ echo "run nueid script..." >> $logfile
 echo "python ${nueid_inter_dir}/inter_ana_nue.py ${input_ssnet_file} ${input_vertex_file} ${input_reco2d_file} ${nueid_cfg_file} ${jobid} BBB ." >> $logfile
 python ${nueid_inter_dir}/inter_ana_nue.py ${input_ssnet_file} ${input_vertex_file} ${input_reco2d_file} ${nueid_cfg_file} ${jobid} BBB . >> $logfile 2>&1
 rc=$?; 
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... inter nueid script run" >> $logfile
 
@@ -153,7 +148,7 @@ echo "run shower..." >> $logfile
 echo "python ${shower_dir}/reco_recluster_shower.py nueid_lcv_out_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . 0 0 BBB ${shower_cfg_file}" >> $logfile
 python ${shower_dir}/reco_recluster_shower.py nueid_lcv_out_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . 0 0 BBB ${shower_cfg_file} >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "...shower complete" >> $logfile
 
@@ -161,7 +156,7 @@ echo "analyze shower..." >> $logfile
 echo "python ${shower_dir}/run_ShowerQuality.py shower_reco_out_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} ." >> $logfile
 python ${shower_dir}/run_ShowerQuality.py shower_reco_out_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "...shower analyzed" >> $logfile
 
@@ -169,7 +164,7 @@ echo "match shower..." >> $logfile
 echo "python ${match_dir}/ana_truth_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root" >> $logfile
 python ${match_dir}/ana_truth_match.py ${shower_ana_cfg_file} shower ${input_ssnet_file} shower_reco_out_${jobid}.root . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... match complete" >> $logfile
 
@@ -190,7 +185,7 @@ echo "run flashmatch inter tool script..." >> $logfile
 echo "python ${flashmatch_inter_dir}/inter_ana_nue_flash.py ${input_ssnet_file} nueid_lcv_out_${jobid}.root nueid_ll_out_${jobid}.root ${input_opreco_file} ${flash_cfg_file} ${jobid} BBB ." >> $logfile
 python ${flashmatch_inter_dir}/inter_ana_nue_flash.py ${input_ssnet_file} nueid_lcv_out_${jobid}.root nueid_ll_out_${jobid}.root ${input_opreco_file} ${flash_cfg_file} ${jobid} BBB . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... flashmatch inter tool script run" >> $logfile
 
@@ -211,7 +206,7 @@ echo "run MPID inference script..." >> $logfile
 echo "python ${pid_dir}/inference_pid.py ${input_ssnet_file} nueid_lcv_out_${jobid}.root . ${inference_cfg_file}" >> $logfile
 python ${pid_dir}/inference_pid.py ${input_ssnet_file} nueid_lcv_out_${jobid}.root . ${inference_cfg_file} >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... MPID inference script run" >> $logfile
 
@@ -219,7 +214,7 @@ echo "run multiplicity inference script..." >> $logfile
 echo "python ${pid_dir}/inference_multiplicity.py ${input_ssnet_file} nueid_lcv_out_${jobid}.root . ${inference_cfg_file}" >> $logfile
 python ${pid_dir}/inference_multiplicity.py ${input_ssnet_file} nueid_lcv_out_${jobid}.root . ${inference_cfg_file} >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... multiplicity inference script run" >> $logfile
 
@@ -240,7 +235,7 @@ echo "making nueid pickle..." >> $logfile
 echo "python ${stage2_ana_dir}/make_nueid_pickle.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root multipid_out_${jobid}.root multiplicity_out_${jobid}.root nueid_ana_${jobid}.root flash_ana_nue_${jobid}.root ${jobid} ." >> $logfile
 python ${stage2_ana_dir}/make_nueid_pickle.py showerqualsingle_${jobid}.root shower_truth_match_${jobid}.root multipid_out_${jobid}.root multiplicity_out_${jobid}.root nueid_ana_${jobid}.root flash_ana_nue_${jobid}.root ${jobid} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... made nueid pickle" >> $logfile
 
@@ -255,10 +250,10 @@ echo " "
 echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`/
-chmod -R a+rwx `pwd -P`/.pylardcache
-chmod -R a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`/
+chmod -R 777 `pwd -P`/.pylardcache
+chmod -R 777 `pwd -P`/../
 rm -rf *.root
 rm -rf *.pkl
 rm -rf .pylardcache

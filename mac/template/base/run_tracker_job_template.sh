@@ -96,9 +96,9 @@ cat $tracker_ana_cfg_file >> $logfile
 #
 # Permissions
 #
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`/
-chmod -R a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`/
+chmod -R 777 `pwd -P`/../
 
 #
 # RUN tracker with nueid output
@@ -112,7 +112,7 @@ echo "run track..." >> $logfile
 echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_vertex_file} ." >> $logfile
 python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_ssnet_file} ${input_vertex_file} . >> $logfile 2>&1
 rc=$?; 
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "...track complete" >> $logfile
 
@@ -120,7 +120,7 @@ echo "analyze track..." >> $logfile
 echo "python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1"
 python ${tracker_ana_dir}/run_TrackQuality.py tracker_reco_${jobid}.root ${input_reco2d_file} ${input_mcinfo_file} . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... analyze complete" >> $logfile
 
@@ -128,7 +128,7 @@ echo "truth match track..." >> $logfile
 echo "python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root ." >> $logfile
 python ${match_dir}/ana_truth_match.py ${tracker_ana_cfg_file} track ${input_ssnet_file} tracker_reco_${jobid}.root . >> $logfile 2>&1
 rc=$?;
-chmod a+rwx *
+chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "...truth match complete" >> $logfile
 
@@ -145,10 +145,10 @@ echo "copying..." >> $logfile
 rsync -av *.root ${output_dir}
 rsync -av *.pkl ${output_dir}
 rsync -av *.png ${output_dir}
-chmod -R a+rwx ${output_dir}
-chmod -R a+rwx `pwd -P`/
-chmod -R a+rwx `pwd -P`/.pylardcache
-chmod -R a+rwx `pwd -P`/../
+chmod -R 777 ${output_dir}
+chmod -R 777 `pwd -P`/
+chmod -R 777 `pwd -P`/.pylardcache
+chmod -R 777 `pwd -P`/../
 rm -rf *.root
 rm -rf *.pkl
 rm -rf *.png
