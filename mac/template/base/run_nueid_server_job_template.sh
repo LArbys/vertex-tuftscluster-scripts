@@ -53,15 +53,6 @@ ssnet_inputlist=`printf ${inputlist_dir}/ssnet_inputlist_%05d.txt ${jobid}`
 tagger_inputlist=`printf ${inputlist_dir}/tagger_inputlist_%05d.txt ${jobid}`
 vertex_inputlist=`printf ${inputlist_dir}/vertex_inputlist_%05d.txt ${jobid}`
 opreco_inputlist=`printf ${inputlist_dir}/opreco_inputlist_%05d.txt ${jobid}`
-
-tracker_out_inputlist=`printf ${inputlist_dir}/tracker_out_inputlist_%05d.txt ${jobid}`
-tracker_ana1_inputlist=`printf ${inputlist_dir}/tracker_ana1_inputlist_%05d.txt ${jobid}`
-tracker_ana2_inputlist=`printf ${inputlist_dir}/tracker_ana2_inputlist_%05d.txt ${jobid}`
-tracker_dir_inputlist=`printf ${inputlist_dir}/tracker_dir_inputlist_%05d.txt ${jobid}`
-tracker_pgraph_inputlist=`printf ${inputlist_dir}/tracker_pgraph_inputlist_%05d.txt ${jobid}`
-tracker_truth_inputlist=`printf ${inputlist_dir}/tracker_truth_inputlist_%05d.txt ${jobid}`
-
-pkl_inputlist=`printf ${inputlist_dir}/pkl_inputlist_%05d.txt ${jobid}`
 reco2d_inputlist=`printf ${inputlist_dir}/reco2d_inputlist_%05d.txt ${jobid}`
 
 #
@@ -72,14 +63,6 @@ input_ssnet_file=`sed -n 1p ${ssnet_inputlist}`
 input_tagger_file=`sed -n 1p ${tagger_inputlist}`
 input_vertex_file=`sed -n 1p ${vertex_inputlist}`
 input_opreco_file=`sed -n 1p ${opreco_inputlist}`
-
-input_tracker_out_file=`sed -n 1p ${tracker_out_inputlist}`
-input_tracker_ana1_file=`sed -n 1p ${tracker_ana1_inputlist}`
-input_tracker_ana2_file=`sed -n 1p ${tracker_ana2_inputlist}`
-input_tracker_dir_file=`sed -n 1p ${tracker_dir_inputlist}`
-input_tracker_truth_file=`sed -n 1p ${tracker_truth_inputlist}`
-
-input_pkl_file=`sed -n 1p ${pkl_inputlist}`
 input_reco2d_file=`sed -n 1p ${reco2d_inputlist}`
 
 slurm_folder=`printf slurm_inter_job%05d ${jobid}`
@@ -117,9 +100,6 @@ stage2_ana_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/stage2/
 # define cfg files
 #
 
-tracker_ana_cfg_file=${jobdir}/ZZZ
-cat $tracker_ana_cfg_file >> $logfile
-
 shower_cfg_file=${jobdir}/KKK
 cat $shower_cfg_file >> $logfile
 
@@ -134,6 +114,9 @@ cat $nueid_cfg_file >> $logfile
 
 flash_cfg_file=${jobdir}/GGG
 cat $flash_cfg_file >> $logfile
+
+michelid_cfg_file=${jobdir}/HHH
+cat $michelid_cfg_file >> $logfile
 
 #
 # Permissions
@@ -163,6 +146,27 @@ echo " "
 echo " "
 echo " "
 
+
+#
+# RUN michelid InterTool script
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run michelid script..." >> $logfile
+echo "python ${nueid_inter_dir}/inter_ana_michel_server.py ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} ${input_vertex_file} ${input_reco2d_file} ${michelid_cfg_file} ${jobid} ." >> $logfile
+python ${nueid_inter_dir}/inter_ana_michel_server.py ${input_supera_file} ${input_ssnet_file} ${input_tagger_file} ${input_vertex_file} ${input_reco2d_file} ${michelid_cfg_file} ${jobid} . >> $logfile 2>&1
+rc=$?; 
+chmod 777 *
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... inter michelid script run" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
 
 #
 # RUN shower reco with no reclustering
@@ -210,8 +214,8 @@ echo " "
 echo " "
 
 echo "run flashmatch inter tool script..." >> $logfile
-echo "python ${flashmatch_inter_dir}/inter_ana_flash.py ${input_supera_file} nueid_lcv_out_${jobid}.root ${input_opreco_file} shower_reco_out_${jobid}.root ${input_tracker_out_file} \"\" BBB . inter_nueid_flash.cfg ${input_reco2d_file}" >> $logfile
-python ${flashmatch_inter_dir}/inter_ana_flash.py ${input_supera_file} nueid_lcv_out_${jobid}.root ${input_opreco_file} shower_reco_out_${jobid}.root ${input_tracker_out_file} "" BBB . inter_nueid_flash.cfg ${input_reco2d_file} >> $logfile 2>&1
+echo "python ${flashmatch_inter_dir}/inter_ana_nue_flash.py ${input_supera_file} nueid_lcv_out_${jobid}.root nueid_ll_out_${jobid}.root ${input_opreco_file} ${flash_cfg_file} ${jobid} BBB ." >> $logfile
+python ${flashmatch_inter_dir}/inter_ana_nue_flash.py ${input_supera_file} nueid_lcv_out_${jobid}.root nueid_ll_out_${jobid}.root ${input_opreco_file} ${flash_cfg_file} ${jobid} BBB . >> $logfile 2>&1
 rc=$?;
 chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi

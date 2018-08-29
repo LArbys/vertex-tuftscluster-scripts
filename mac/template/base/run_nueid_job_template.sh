@@ -107,6 +107,9 @@ cat $nueid_cfg_file >> $logfile
 flash_cfg_file=${jobdir}/GGG
 cat $flash_cfg_file >> $logfile
 
+michelid_cfg_file=${jobdir}/HHH
+cat $michelid_cfg_file >> $logfile
+
 #
 # Permissions
 #
@@ -129,6 +132,27 @@ rc=$?;
 chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... inter nueid script run" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# RUN michelid InterTool script
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run michelid script..." >> $logfile
+echo "python ${nueid_inter_dir}/inter_ana_michel.py ${input_ssnet_file} ${input_vertex_file} ${input_reco2d_file} ${michelid_cfg_file} ${jobid} ." >> $logfile
+python ${nueid_inter_dir}/inter_ana_michel.py ${input_ssnet_file} ${input_vertex_file} ${input_reco2d_file} ${michelid_cfg_file} ${jobid} . >> $logfile 2>&1
+rc=$?; 
+chmod 777 *
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... inter michelid script run" >> $logfile
 
 echo " "
 echo " "
