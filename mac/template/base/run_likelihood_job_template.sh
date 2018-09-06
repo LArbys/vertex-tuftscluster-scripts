@@ -80,6 +80,17 @@ cd ${slurm_folder}
 logfile=`printf log_ll_%05d.txt ${jobid}`
 touch ${logfile}
 
+
+#
+# configs
+#
+nue_cut_file=${jobdir}/KKK
+cat $nue_cut_file>> $logfile
+
+pmt_precut_file=${jobdir}/RRR
+cat $pmt_precut_file >> $logfile
+
+
 #
 # echo into it
 #
@@ -111,15 +122,15 @@ echo " "
 echo " "
 echo " "
 
-# numu_pkl=${numu_ll_dir}/selection4PDFs.pickle
+numu_pkl=${numu_ll_dir}/selection4PDFs_nompl.pickle
 
-# echo "run numu LL..." >> $logfile
-# echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles_2.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl} ." >> $logfile
-# python ${numu_ll_dir}/MakeNuMuSelectionFiles_2.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl} . >> $logfile 2>&1
-# rc=$?;
-# chmod 777 *
-# if [[ $rc != 0 ]]; then exit $rc; fi
-# echo "... numu LL complete" >> $logfile
+echo "run numu LL..." >> $logfile
+echo "python ${numu_ll_dir}/MakeNuMuSelectionFiles_2.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl} ." >> $logfile
+python ${numu_ll_dir}/MakeNuMuSelectionFiles_2.py ${input_tracker_ana_file} ${input_vertex_ana_file} ${numu_pkl} . >> $logfile 2>&1
+rc=$?;
+chmod 777 *
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... numu LL complete" >> $logfile
 
 echo " "
 echo " "
@@ -143,8 +154,8 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... vertex & nueid combined"
 
 echo "run nue selection..." >> $logfile
-echo "python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${jobid} . " >> $logfile
-python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${jobid} . >> $logfile 2>&1
+echo "python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${nue_cut_file} 1 ${jobid} . " >> $logfile
+python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${nue_cut_file} 1 ${jobid} . >> $logfile 2>&1
 rc=$?;
 chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
@@ -207,8 +218,8 @@ echo " "
 echo " "
 
 echo "run pmt precut dump..." >> $logfile
-echo "python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} ." >> $logfile
-python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} YYY ${jobid} . >> $logfile 2>&1
+echo "python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} ${pmt_precut_file} ${jobid} ." >> $logfile
+python ${mcdump_dir}/run_PMTPrecuts.py ${input_opreco_file} ${pmt_precut_file} ${jobid} . >> $logfile 2>&1
 rc=$?;
 chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
