@@ -50,6 +50,7 @@ echo "JOBID ${jobid}"
 #
 tagger_lcv_inputlist=`printf ${inputlist_dir}/tagger_lcv_inputlist_%05d.txt ${jobid}`
 tagger_ll_inputlist=`printf ${inputlist_dir}/tagger_ll_inputlist_%05d.txt ${jobid}`
+vertex_out_inputlist=`printf ${inputlist_dir}/vertex_out_inputlist_%05d.txt ${jobid}`
 vertex_ana_inputlist=`printf ${inputlist_dir}/vertex_ana_inputlist_%05d.txt ${jobid}`
 tracker_ana_inputlist=`printf ${inputlist_dir}/tracker_ana_inputlist_%05d.txt ${jobid}`
 tracker_truth_inputlist=`printf ${inputlist_dir}/tracker_truth_inputlist_%05d.txt ${jobid}`
@@ -63,6 +64,7 @@ nueid_pkl_inputlist=`printf ${inputlist_dir}/nueid_pkl_inputlist_%05d.txt ${jobi
 #
 input_tagger_lcv_file=`sed -n 1p ${tagger_lcv_inputlist}`
 input_tagger_ll_file=`sed -n 1p ${tagger_ll_inputlist}`
+input_vertex_out_file=`sed -n 1p ${vertex_out_inputlist}`
 input_vertex_ana_file=`sed -n 1p ${vertex_ana_inputlist}`
 input_tracker_ana_file=`sed -n 1p ${tracker_ana_inputlist}`
 input_mcinfo_file=`sed -n 1p ${mcinfo_inputlist}`
@@ -101,6 +103,7 @@ echo "RUNNING LL JOB ${jobid}" > $logfile
 #
 numu_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/numu/
 nue_ll_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/likelihood/nue/
+final_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/final_file/
 mcdump_dir=${LARLITECV_BASEDIR}/app/LLCVProcessor/DLHandshake/mac/
 xing_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/cosmic_xing/
 pot_dir=${LARCV_BASEDIR}/app/LArOpenCVHandle/ana/pot/
@@ -153,13 +156,21 @@ chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... vertex & nueid combined"
 
-echo "run nue selection..." >> $logfile
+echo "run nue cut selection..." >> $logfile
 echo "python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${nue_cut_file} 1 ${jobid} . " >> $logfile
 python ${nue_ll_dir}/run_nue_selection.py comb_df_${jobid}.pkl ${nue_cut_file} 1 ${jobid} . >> $logfile 2>&1
 rc=$?;
 chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
-echo "... nue selection complete" >> $logfile
+echo "... nue cut selection complete" >> $logfile
+
+echo "run nue ll selection..." >> $logfile
+echo "python ${nue_ll_dir}/run_nue_likelihood.py nue_selected_df_${jobid}.pkl ${nue_ll_dir}/bin/revised_LLem_pdfs.root ${nue_ll_dir}/bin/revised_LLpc_pdfs.root ${jobid} ." >> $logfile
+python ${nue_ll_dir}/run_nue_likelihood.py nue_selected_df_${jobid}.pkl ${nue_ll_dir}/bin/revised_LLem_pdfs.root ${nue_ll_dir}/bin/revised_LLpc_pdfs.root ${jobid} . >> $logfile 2>&1
+rc=$?;
+chmod 777 *
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... nue ll selection complete" >> $logfile
 
 echo " "
 echo " "
@@ -230,7 +241,6 @@ echo " "
 echo " "
 echo " "
 
-
 #
 # POT dump
 #
@@ -272,6 +282,50 @@ echo " "
 echo " "
 echo " "
 echo " "
+
+#
+# event weight dump
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run event weight dump..." >> $logfile
+echo "python ${final_dir}/make_andy.py mc_information_${jobid}.root ${jobid} ." >> $logfile
+python ${final_dir}/make_andy.py mc_information_${jobid}.root ${jobid} . >> $logfile 2>&1
+rc=$?;
+chmod 777 *
+# if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... event weight dump complete" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+#
+# make the final analysis file
+#
+echo " "
+echo " "
+echo " "
+echo " "
+
+echo "run final analysis maker..." >> $logfile
+echo "python ${final_dir}/make_ttree.py ${input_vertex_out_file} ${input_vertex_pkl_file} ${input_tracker_ana_file} FinalVertexVariables_${jobid}.root mc_information_${jobid}.root nue_selected_df_${jobid}.pkl nue_ll_df_${jobid}.pkl ${jobid} ." >> $logfile
+python ${final_dir}/make_ttree.py ${input_vertex_out_file} ${input_vertex_pkl_file} ${input_tracker_ana_file} FinalVertexVariables_${jobid}.root mc_information_${jobid}.root nue_selected_df_${jobid}.pkl nue_ll_df_${jobid}.pkl ${jobid} . >> $logfile 2>&1
+rc=$?;
+chmod 777 *
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... final analysis maker" >> $logfile
+
+echo " "
+echo " "
+echo " "
+echo " "
+
+
 
 
 #

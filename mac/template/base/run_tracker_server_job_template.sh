@@ -114,8 +114,8 @@ echo " "
 echo " "
 
 echo "run track..." >> $logfile
-echo "python ${tracker_dir}/run_reco3d_server.py ${tracker_cfg_file} ${input_supera_file} ${input_vertex_file} ." >> $logfile
-python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_supera_file} ${input_vertex_file} . >> $logfile 2>&1
+echo "python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_supera_file} ${input_tagger_file} ${input_vertex_file} ." >> $logfile
+python ${tracker_dir}/run_reco3d.py ${tracker_cfg_file} ${input_supera_file} ${input_tagger_file} ${input_vertex_file} . >> $logfile 2>&1
 rc=$?;
 chmod 777 *
 if [[ $rc != 0 ]]; then exit $rc; fi
