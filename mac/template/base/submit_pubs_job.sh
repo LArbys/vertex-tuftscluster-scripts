@@ -6,6 +6,7 @@
 #SBATCH --ntasks=CCC
 #SBATCH --time=02:00:00
 #SBATCH --mem-per-cpu=2000
+#SBATCH --exclude=pcomp26
 
 CONTAINER=DDD
 WORKDIR=EEE
