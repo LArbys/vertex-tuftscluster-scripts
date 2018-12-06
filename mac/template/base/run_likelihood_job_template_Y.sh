@@ -185,6 +185,15 @@ echo "return code=${rc}" >> $logfile
 if [[ $rc != 0 ]]; then exit $rc; fi
 echo "... nue ll selection complete" >> $logfile
 
+echo "run nue BDT Y selection..." >> $logfile
+echo "python ${nue_ll_dir}/run_nue_BDT_Y.py nue_ll_Y_df_${jobid}.pkl ${nue_ll_dir}/bin/bst_em_11302018.bin ${nue_ll_dir}/bin/bst_pc_11302018.bin ${jobid} ." >> $logfile
+python ${nue_ll_dir}/run_nue_BDT_Y.py nue_ll_Y_df_${jobid}.pkl ${nue_ll_dir}/bin/bst_em_11302018.bin ${nue_ll_dir}/bin/bst_pc_11302018.bin ${jobid} . >> $logfile 2>&1
+rc=$?;
+chmod 777 *
+echo "return code=${rc}" >> $logfile
+if [[ $rc != 0 ]]; then exit $rc; fi
+echo "... nue BDT selection complete" >> $logfile
+
 echo " "
 echo " "
 echo " "
